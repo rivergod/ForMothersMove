@@ -148,11 +148,11 @@ public class MainActivity extends MapActivity {
 
 		// A LazyLoadListener is optional!
 		aptsManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
-			long debug_lazyload_runtime;
+			// long debug_lazyload_runtime;
 
 			@Override
 			public void onBegin(ManagedOverlay overlay) {
-				debug_lazyload_runtime = System.currentTimeMillis();
+				// debug_lazyload_runtime = System.currentTimeMillis();
 			}
 
 			@Override
@@ -234,7 +234,7 @@ public class MainActivity extends MapActivity {
 					}
 				});
 
-//		overlayManager.populate();
+		// overlayManager.populate();
 
 		ManagedOverlay idessAfUserManagedOverlay = overlayManager
 				.createOverlay("IdessAfUserOverlay", getResources()
@@ -277,11 +277,11 @@ public class MainActivity extends MapActivity {
 
 		// A LazyLoadListener is optional!
 		idessAfUserManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
-			long debug_lazyload_runtime;
+			// long debug_lazyload_runtime;
 
 			@Override
 			public void onBegin(ManagedOverlay overlay) {
-				debug_lazyload_runtime = System.currentTimeMillis();
+				// debug_lazyload_runtime = System.currentTimeMillis();
 			}
 
 			@Override
@@ -362,7 +362,7 @@ public class MainActivity extends MapActivity {
 					}
 				});
 
-//		overlayManager.populate();
+		// overlayManager.populate();
 
 		ManagedOverlay busStationManagedOverlay = overlayManager.createOverlay(
 				"BusStationOverlay",
@@ -405,11 +405,11 @@ public class MainActivity extends MapActivity {
 
 		// A LazyLoadListener is optional!
 		busStationManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
-			long debug_lazyload_runtime;
+			// long debug_lazyload_runtime;
 
 			@Override
 			public void onBegin(ManagedOverlay overlay) {
-				debug_lazyload_runtime = System.currentTimeMillis();
+				// debug_lazyload_runtime = System.currentTimeMillis();
 			}
 
 			@Override
@@ -490,7 +490,7 @@ public class MainActivity extends MapActivity {
 					}
 				});
 
-//		overlayManager.populate();
+		// overlayManager.populate();
 
 		ManagedOverlay schoolManagedOverlay = overlayManager.createOverlay(
 				"SchoolManagedOverlay",
@@ -533,11 +533,11 @@ public class MainActivity extends MapActivity {
 
 		// A LazyLoadListener is optional!
 		schoolManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
-			long debug_lazyload_runtime;
+			// long debug_lazyload_runtime;
 
 			@Override
 			public void onBegin(ManagedOverlay overlay) {
-				debug_lazyload_runtime = System.currentTimeMillis();
+				// debug_lazyload_runtime = System.currentTimeMillis();
 			}
 
 			@Override
