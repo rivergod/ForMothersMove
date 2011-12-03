@@ -24,6 +24,7 @@ import com.krcode.mothers.helpers.SchoolHelper;
 import com.krcode.mothers.vo.BusStationVO;
 import com.krcode.mothers.vo.IPointVO;
 import com.krcode.mothers.vo.IdessAfUserVO;
+import com.krcode.mothers.vo.SchoolVO;
 
 import de.android1.overlaymanager.ManagedOverlay;
 import de.android1.overlaymanager.ManagedOverlayGestureDetector.OnOverlayGestureListener;
@@ -496,6 +497,15 @@ public class MainActivity extends MapActivity {
 								&& item instanceof PointManagedOverlayItem) {
 
 							PointManagedOverlayItem pItem = (PointManagedOverlayItem) item;
+
+							SchoolVO vo = (SchoolVO) pItem.getVo();
+
+							AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+									MainActivity.this);
+							dialogBuilder.setTitle(vo.getName());
+							dialogBuilder.setMessage("홈페이지: " + vo.getHomepage() + "\n" + "전화번호: " + vo.getTelephone() + "\n" + "주소: " + vo.getAddress() + "\n");
+
+							dialogBuilder.show();
 
 						}
 						return false;
