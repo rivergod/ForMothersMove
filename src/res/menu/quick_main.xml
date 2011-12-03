@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+          android:id="@+id/quick_menu_goto"
+          android:title="@string/quick_goto"
+          android:orderInCategory="1"></item>
+    <item
+          android:id="@+id/quick_menu_recommend"
+          android:title="@string/quick_recommend"
+          android:orderInCategory="2"></item>
+    <item
+          android:id="@+id/quick_menu_attention"
+          android:title="@string/quick_attention"
+          android:orderInCategory="3"></item>
+    <item
+          android:id="@+id/quick_menu_loginout"
+          android:title="@string/quick_login"
+          android:orderInCategory="4"></item>
+</menu>

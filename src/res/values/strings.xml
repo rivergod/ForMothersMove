@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="appversion">0.0.1.5</string>
+	<string name="loading">Loadings...</string>
+	<string name="app_name">맹모삼천지교</string>
+
+	<string name="quick_goto">이동</string>
+	<string name="quick_recommend">추천</string>
+	<string name="quick_attention">관심</string>
+	<string name="quick_login">로그인</string>
+	<string name="quick_logout">로그아웃</string>
+	
+	<string name="gotolocationtitle">빠른이동</string>
+	<string name="gotolocationcity">시</string>
+	<string name="gotolocationgu">구</string>
+	<string name="gotolocationdong">동</string>
+	<string name="gotolocationgoto">이동</string>
+
+	<string name="attentionlisttitle">관심지역목록</string>
+	<string name="attentionlistnodata">등록된 관심 지역이 없습니다.</string>
+
+	<string name="recommendlisttitle">추천지역목록</string>
+	<string name="recommendlistnodata">등록된 추천 지역이 없습니다.</string>
+
+	<string name="logintitle">로그인</string>
+	<string name="loginid">ID</string>
+	<string name="loginpassword">비밀번호</string>
+	<string name="loginlogin">로그인</string>
+	<string name="logincreateaccount">회원가입</string>
+
+	<string name="createaccounttitle">회원가입</string>
+	<string name="createaccountid">ID</string>
+	<string name="createaccountpassword">비밀번호</string>
+	<string name="createaccountcheckpassword">확인</string>
+	<string name="createaccountemail">이메일</string>
+	<string name="createaccountcreate">가입</string>
+	<string name="createaccountcancel">취소</string>
+</resources>
