@@ -8,18 +8,20 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.google.android.maps.GeoPoint;
 import com.krcode.mothers.IConstant;
+import com.krcode.mothers.vo.AptsVO;
+import com.krcode.mothers.vo.IPointVO;
 
 public class AptHelper {
 
 	// public static final float 1E6 = 10000000.0;
 
-	public static List<GeoPoint> findMarker(GeoPoint topleft,
+	public static List<? extends IPointVO> findMarker(GeoPoint topleft,
 			GeoPoint bottomright, int zoomlevel) {
 
-		List<GeoPoint> marker = new LinkedList<GeoPoint>();
+		List<AptsVO> markers = new LinkedList<AptsVO>();
 
 		if (zoomlevel < 16) {
-			return marker;
+			return markers;
 		}
 
 		// open databases;
@@ -28,7 +30,7 @@ public class AptHelper {
 
 		Cursor c = db.query(
 				"apts",
-				new String[] { "latitude", "longitude" },
+				new String[] { "apt_name", "address", "latitude", "longitude" },
 				"(latitude between ? and ?) and (longitude between ? and ?)",
 				new String[] { String.valueOf(bottomright.getLatitudeE6()),
 						String.valueOf(topleft.getLatitudeE6()),
@@ -37,14 +39,21 @@ public class AptHelper {
 				null, null);
 
 		while (c.moveToNext()) {
-			marker.add(new GeoPoint(c.getInt(0), c.getInt(1)));
+			AptsVO vo = new AptsVO();
+			
+			vo.setAptName(c.getString(0));
+			vo.setAddress(c.getString(1));
+			vo.setLat(c.getString(2));
+			vo.setLng(c.getString(3));
+			
+			markers.add(vo);
 		}
 
 		c.close();
 
 		db.close();
 
-		return marker;
+		return markers;
 	}
 
 	public static String getDatabaseName() {

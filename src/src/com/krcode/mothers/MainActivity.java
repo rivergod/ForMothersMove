@@ -21,6 +21,7 @@ import com.krcode.mothers.helpers.AptHelper;
 import com.krcode.mothers.helpers.BusHelper;
 import com.krcode.mothers.helpers.IdessAfUserHelper;
 import com.krcode.mothers.helpers.SchoolHelper;
+import com.krcode.mothers.vo.AptsVO;
 import com.krcode.mothers.vo.BusStationVO;
 import com.krcode.mothers.vo.IPointVO;
 import com.krcode.mothers.vo.IdessAfUserVO;
@@ -109,18 +110,29 @@ public class MainActivity extends MapActivity {
 
 		aptsManagedOverlay.setLazyLoadCallback(new LazyLoadCallback() {
 			@Override
-			public List<ManagedOverlayItem> lazyload(GeoPoint topLeft,
-					GeoPoint bottomRight, ManagedOverlay overlay)
-					throws LazyLoadException {
-				List<ManagedOverlayItem> items = new LinkedList<ManagedOverlayItem>();
+			public List<? extends ManagedOverlayItem> lazyload(
+					GeoPoint topLeft, GeoPoint bottomRight,
+					ManagedOverlay overlay) throws LazyLoadException {
+				List<PointManagedOverlayItem> items = new LinkedList<PointManagedOverlayItem>();
+
 				try {
-					List<GeoPoint> marker = AptHelper.findMarker(topLeft,
-							bottomRight, overlay.getZoomlevel());
-					for (int i = 0; i < marker.size(); i++) {
-						GeoPoint point = marker.get(i);
-						ManagedOverlayItem item = new ManagedOverlayItem(point,
-								"Item" + i, "");
+					List<? extends IPointVO> points = AptHelper.findMarker(
+							topLeft, bottomRight, overlay.getZoomlevel());
+
+					Iterator<? extends IPointVO> iter = points.iterator();
+
+					int i = 0;
+
+					while (iter.hasNext()) {
+						IPointVO vo = iter.next();
+
+						PointManagedOverlayItem item = new PointManagedOverlayItem(
+								new GeoPoint(vo.getLatitude1E6(), vo
+										.getLongitude1E6()), "Item" + i, "", vo);
+
 						items.add(item);
+
+						i++;
 					}
 					// lets simulate a latency
 					TimeUnit.SECONDS.sleep(1);
@@ -128,7 +140,7 @@ public class MainActivity extends MapActivity {
 					throw new LazyLoadException(e.getMessage());
 				}
 
-				Log.d("MOTHERS", items.size() + " apt items append!");
+				Log.d("MOTHERS", items.size() + " apt station items append!");
 
 				return items;
 			}
@@ -158,7 +170,71 @@ public class MainActivity extends MapActivity {
 
 			}
 		});
-		overlayManager.populate();
+
+		aptsManagedOverlay
+				.setOnOverlayGestureListener(new OnOverlayGestureListener() {
+
+					@Override
+					public boolean onZoom(ZoomEvent arg0, ManagedOverlay arg1) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public boolean onSingleTap(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem item) {
+						if (item != null
+								&& item instanceof PointManagedOverlayItem) {
+
+							PointManagedOverlayItem pItem = (PointManagedOverlayItem) item;
+
+							AptsVO vo = (AptsVO) pItem.getVo();
+
+							AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+									MainActivity.this);
+							dialogBuilder.setTitle(vo.getAptName());
+							dialogBuilder.setMessage("주소: " + vo.getAddress()
+									+ "\n");
+
+							dialogBuilder.show();
+						}
+						return false;
+					}
+
+					@Override
+					public boolean onScrolled(MotionEvent arg0,
+							MotionEvent arg1, float arg2, float arg3,
+							ManagedOverlay arg4) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public void onLongPressFinished(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem arg3) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onLongPress(MotionEvent arg0,
+							ManagedOverlay arg1) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public boolean onDoubleTap(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem arg3) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+				});
+
+//		overlayManager.populate();
 
 		ManagedOverlay idessAfUserManagedOverlay = overlayManager
 				.createOverlay("IdessAfUserOverlay", getResources()
@@ -286,7 +362,7 @@ public class MainActivity extends MapActivity {
 					}
 				});
 
-		overlayManager.populate();
+//		overlayManager.populate();
 
 		ManagedOverlay busStationManagedOverlay = overlayManager.createOverlay(
 				"BusStationOverlay",
@@ -414,7 +490,7 @@ public class MainActivity extends MapActivity {
 					}
 				});
 
-		overlayManager.populate();
+//		overlayManager.populate();
 
 		ManagedOverlay schoolManagedOverlay = overlayManager.createOverlay(
 				"SchoolManagedOverlay",
@@ -503,7 +579,10 @@ public class MainActivity extends MapActivity {
 							AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
 									MainActivity.this);
 							dialogBuilder.setTitle(vo.getName());
-							dialogBuilder.setMessage("홈페이지: " + vo.getHomepage() + "\n" + "전화번호: " + vo.getTelephone() + "\n" + "주소: " + vo.getAddress() + "\n");
+							dialogBuilder.setMessage("홈페이지: "
+									+ vo.getHomepage() + "\n" + "전화번호: "
+									+ vo.getTelephone() + "\n" + "주소: "
+									+ vo.getAddress() + "\n");
 
 							dialogBuilder.show();
 
