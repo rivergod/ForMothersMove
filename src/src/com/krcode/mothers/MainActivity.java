@@ -626,19 +626,4 @@ public class MainActivity extends MapActivity {
 
 	}
 
-	private class PointManagedOverlayItem extends ManagedOverlayItem {
-
-		private IPointVO vo = null;
-
-		public PointManagedOverlayItem(GeoPoint point, String title,
-				String snippet, IPointVO vo) {
-			super(point, title, snippet);
-			this.vo = vo;
-		}
-
-		public IPointVO getVo() {
-			return vo;
-		}
-	}
-
 }
