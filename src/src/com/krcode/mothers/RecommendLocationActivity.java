@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -17,12 +18,14 @@ import com.krcode.mothers.vo.AptsVO;
 import com.krcode.mothers.vo.IPointVO;
 
 public class RecommendLocationActivity extends ListActivity {
+	
+	private List<IPointVO> lst;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recommendlist);
 
-		List<IPointVO> lst = new LinkedList<IPointVO>();
+		lst = new LinkedList<IPointVO>();
 
 		if (MainActivity.accountVO != null
 				&& MainActivity.accountVO.isAvalidable()) {
@@ -50,6 +53,14 @@ public class RecommendLocationActivity extends ListActivity {
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
+		
+		Intent intent = new Intent(this, MainActivity.class);
+		
+		intent.putExtra("ADDRESS", ((AptsVO)lst.get(position)).getAddress());
+		
+		setResult(RESULT_OK, intent);
+		
+		this.finish();
 		
 		super.onListItemClick(l, v, position, id);
 	}
