@@ -45,6 +45,7 @@ import de.android1.overlaymanager.lazyload.LazyLoadListener;
 public class MainActivity extends MapActivity {
 	public final static int RECOMMENDLOCATIONACTIVITY = 100;
 	public final static int ATTENTIONLISTACTIVITY = 101;
+	public final static int GOTOLOCATIONACTIVITY = 102;
 
 	private MapView mapView;
 	// private MapController mapController;
@@ -123,32 +124,53 @@ public class MainActivity extends MapActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent = null;
 		switch (item.getItemId()) {
 		case R.id.quick_menu_goto:
-			startActivity(new Intent(MainActivity.this,
-					GotoLocationActivity.class));
+			intent = new Intent(MainActivity.this,
+					GotoLocationActivity.class);
+
+			startActivityForResult(intent, MainActivity.GOTOLOCATIONACTIVITY);
 			return true;
 		case R.id.quick_menu_recommend:
 			if (MainActivity.accountVO != null
-					&& MainActivity.accountVO.isAvalidable()) {
-				startActivityForResult(new Intent(MainActivity.this,
-						RecommendLocationActivity.class), MainActivity.RECOMMENDLOCATIONACTIVITY);
+					&& MainActivity.accountVO.isAvalidable() && mapView != null) {
+				intent = new Intent(MainActivity.this,
+						RecommendLocationActivity.class);
+
+				startActivityForResult(intent,
+						MainActivity.RECOMMENDLOCATIONACTIVITY);
 			} else {
 				Toast.makeText(getApplicationContext(), "로그인 후 사용하실 수 있습니다.",
 						Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		case R.id.quick_menu_attention:
-			startActivityForResult(new Intent(MainActivity.this,
-					AttentionListActivity.class), MainActivity.ATTENTIONLISTACTIVITY);
+			if (MainActivity.accountVO != null
+					&& MainActivity.accountVO.isAvalidable()) {
+				intent = new Intent(MainActivity.this,
+						AttentionListActivity.class);
+
+				GeoPoint point = mapView.getMapCenter();
+
+				intent.putExtra("LATITUDE",
+						String.valueOf(point.getLatitudeE6()));
+				intent.putExtra("LONGITUDE",
+						String.valueOf(point.getLongitudeE6()));
+
+				startActivityForResult(intent,
+						MainActivity.ATTENTIONLISTACTIVITY);
+			} else {
+				Toast.makeText(getApplicationContext(), "로그인 후 사용하실 수 있습니다.",
+						Toast.LENGTH_SHORT).show();
+			}
 			return true;
 		case R.id.quick_menu_loginout:
 			if (MainActivity.accountVO != null
 					&& MainActivity.accountVO.isAvalidable()) {
 				MainActivity.accountVO = null;
 			} else {
-				startActivity(new Intent(MainActivity.this,
-						LoginActivity.class));
+				startActivity(new Intent(MainActivity.this, LoginActivity.class));
 			}
 			return true;
 		}
@@ -160,6 +182,32 @@ public class MainActivity extends MapActivity {
 		// TODO Auto-generated method stub
 
 		switch (requestCode) {
+		case MainActivity.GOTOLOCATIONACTIVITY:
+			if (resultCode == RESULT_OK) {
+				String address = data.getExtras().getString("ADDRESS");
+
+				Locale.setDefault(Locale.KOREA); // = ko_KO, 디폴트로 되어 있으면 말고
+				Geocoder geocoder = new Geocoder(getApplicationContext(),
+						Locale.getDefault());
+
+				List<Address> addresses = null;
+
+				try {
+					addresses = geocoder.getFromLocationName(address, 1);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				if (addresses != null) {
+					animateTo(new GeoPoint((int) (addresses.get(0)
+							.getLatitude() * 1E6), (int) (addresses.get(0)
+							.getLongitude() * 1E6)));
+					mapView.getController().setZoom(18);
+				}
+
+			}
+			break;
 		case MainActivity.RECOMMENDLOCATIONACTIVITY:
 			if (resultCode == RESULT_OK) {
 				String address = data.getExtras().getString("ADDRESS");
@@ -178,23 +226,37 @@ public class MainActivity extends MapActivity {
 				}
 
 				if (addresses != null) {
-					animateTo(new GeoPoint((int)(addresses.get(0).getLatitude() * 1E6), (int)(addresses.get(0).getLongitude() * 1E6)));
+					animateTo(new GeoPoint((int) (addresses.get(0)
+							.getLatitude() * 1E6), (int) (addresses.get(0)
+							.getLongitude() * 1E6)));
+					mapView.getController().setZoom(18);
 				}
 
 			}
 			break;
-		
+
 		case MainActivity.ATTENTIONLISTACTIVITY:
+			if (resultCode == RESULT_OK) {
+				// String address = data.getExtras().getString("ADDRESS");
+
+				int lat = Integer.parseInt(data.getExtras().getString(
+						"LATITUDE"));
+				int lng = Integer.parseInt(data.getExtras().getString(
+						"LONGITUDE"));
+
+				animateTo(new GeoPoint(lat, lng));
+				mapView.getController().setZoom(18);
+			}
 			break;
 		}
 
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
+
 	private void animateTo(GeoPoint point) {
 		if (this.mapView != null) {
 			mapView.getController().animateTo(point);
-			
+
 			for (int i = 0; i < mapView.getOverlays().size(); i++) {
 				if (overlayManager.getOverlay(i) instanceof ManagedOverlay) {
 					((ManagedOverlay) overlayManager.getOverlay(i))

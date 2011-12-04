@@ -18,8 +18,9 @@ import com.krcode.mothers.vo.AptsVO;
 import com.krcode.mothers.vo.IPointVO;
 
 public class RecommendLocationActivity extends ListActivity {
-	
+
 	private List<IPointVO> lst;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,31 +38,32 @@ public class RecommendLocationActivity extends ListActivity {
 
 		for (int i = 0; i < lst.size(); i++) {
 			Map<String, String> dataMap = new HashMap<String, String>();
-			
-			dataMap.put("aptName", ((AptsVO)lst.get(i)).getAptName());
-			dataMap.put("address", ((AptsVO)lst.get(i)).getAddress());
-			
+
+			dataMap.put("aptName", ((AptsVO) lst.get(i)).getAptName());
+			dataMap.put("address", ((AptsVO) lst.get(i)).getAddress());
+
 			al.add(dataMap);
 		}
 
 		SimpleAdapter sa = new SimpleAdapter(this, al,
 				R.layout.recommendlistrow,
-				new String[] { "aptName", "address" }, new int[] {
-						R.id.recommendlistrowname, R.id.recommendlistrowaddress });
+				new String[] { "aptName", "address" },
+				new int[] { R.id.recommendlistrowname,
+						R.id.recommendlistrowaddress });
 		this.setListAdapter(sa);
 	}
-	
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		
+
 		Intent intent = new Intent(this, MainActivity.class);
-		
-		intent.putExtra("ADDRESS", ((AptsVO)lst.get(position)).getAddress());
-		
+
+		intent.putExtra("ADDRESS", ((AptsVO) lst.get(position)).getAddress());
+
 		setResult(RESULT_OK, intent);
-		
+
 		this.finish();
-		
+
 		super.onListItemClick(l, v, position, id);
 	}
 }
