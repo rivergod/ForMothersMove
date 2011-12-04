@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -21,6 +22,7 @@ import com.krcode.mothers.helpers.AptHelper;
 import com.krcode.mothers.helpers.BusHelper;
 import com.krcode.mothers.helpers.IdessAfUserHelper;
 import com.krcode.mothers.helpers.SchoolHelper;
+import com.krcode.mothers.vo.AccountVO;
 import com.krcode.mothers.vo.AptsVO;
 import com.krcode.mothers.vo.BusStationVO;
 import com.krcode.mothers.vo.IPointVO;
@@ -40,7 +42,9 @@ public class MainActivity extends MapActivity {
 	private MapView mapView;
 	// private MapController mapController;
 
-	OverlayManager overlayManager;
+	private OverlayManager overlayManager;
+
+	public static AccountVO accountVO = null;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -48,25 +52,60 @@ public class MainActivity extends MapActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		// Intent intent = getIntent();
+		//
+		// if (intent != null && intent.getExtras().containsKey("ACCOUNTVO")
+		// && intent.getExtras().get("ACCOUNTVO") instanceof AccountVO) {
+		// accountVO = (AccountVO) intent.getExtras().get("ACCOUNTVO");
+		// }
+
 		mapView = (MapView) findViewById(R.id.mapview);
 		mapView.setBuiltInZoomControls(true);
 		// mapController = mapView.getController();
 
 		overlayManager = new OverlayManager(getApplication(), mapView);
+		createOverlays();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 	}
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		// TODO Auto-generated method stub
-		createOverlays();
-
 		super.onWindowFocusChanged(hasFocus);
+		for (int i = 0; i < mapView.getOverlays().size(); i++) {
+			if (overlayManager.getOverlay(i) instanceof ManagedOverlay) {
+				((ManagedOverlay) overlayManager.getOverlay(i))
+						.invokeLazyLoad(100);
+			}
+		}
 	}
 
 	@Override
 	protected boolean isRouteDisplayed() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		if (menu.size() >= 4) {
+			if (MainActivity.accountVO != null
+					&& MainActivity.accountVO.isAvalidable()) {
+				if (menu.getItem(3).getItemId() == R.id.quick_menu_loginout) {
+					menu.getItem(3).setTitle("로그아웃");
+				}
+			} else {
+				if (menu.getItem(3).getItemId() == R.id.quick_menu_loginout) {
+					menu.getItem(3).setTitle("로그인");
+				}
+			}
+		}
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -83,21 +122,440 @@ public class MainActivity extends MapActivity {
 					GotoLocationActivity.class));
 			return true;
 		case R.id.quick_menu_recommend:
-			startActivity(new Intent(MainActivity.this,
-					RecommendLocationActivity.class));
+			if (MainActivity.accountVO != null
+					&& MainActivity.accountVO.isAvalidable()) {
+				startActivity(new Intent(MainActivity.this,
+						RecommendLocationActivity.class));
+			} else {
+				Toast.makeText(getApplicationContext(), "로그인 후 사용하실 수 있습니다.",
+						Toast.LENGTH_SHORT).show();
+			}
 			return true;
 		case R.id.quick_menu_attention:
 			startActivity(new Intent(MainActivity.this,
 					AttentionListActivity.class));
 			return true;
 		case R.id.quick_menu_loginout:
-			startActivity(new Intent(MainActivity.this, LoginActivity.class));
+			if (MainActivity.accountVO != null
+					&& MainActivity.accountVO.isAvalidable()) {
+				MainActivity.accountVO = null;
+			} else {
+				startActivity(new Intent(MainActivity.this, LoginActivity.class));
+			}
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void createOverlays() {
+	private void createOverlays() {
+		createAptsManagedOverlay();
+		createIdeffAfUserManagedOverlay();
+		createBusStationManagedOverlay();
+		createSchoolManagedOverlay();
+
+		overlayManager.populate();
+	}
+
+	private void createSchoolManagedOverlay() {
+		// TODO Auto-generated method stub
+		ManagedOverlay schoolManagedOverlay = overlayManager.createOverlay(
+				"SchoolManagedOverlay",
+				getResources().getDrawable(R.drawable.map_marker_04));
+
+		// schoolManagedOverlay.enableLazyLoadAnimation(loaderanim);
+
+		schoolManagedOverlay.setLazyLoadCallback(new LazyLoadCallback() {
+
+			@Override
+			public List<? extends ManagedOverlayItem> lazyload(
+					GeoPoint topLeft, GeoPoint bottomRight,
+					ManagedOverlay overlay) throws LazyLoadException {
+				List<PointManagedOverlayItem> items = new LinkedList<PointManagedOverlayItem>();
+
+				List<? extends IPointVO> points = SchoolHelper.findMarker(
+						topLeft, bottomRight, overlay.getZoomlevel());
+
+				Iterator<? extends IPointVO> iter = points.iterator();
+
+				int i = 0;
+
+				while (iter.hasNext()) {
+					IPointVO vo = iter.next();
+
+					PointManagedOverlayItem item = new PointManagedOverlayItem(
+							new GeoPoint(vo.getLatitude1E6(), vo
+									.getLongitude1E6()), "Item" + i, "", vo);
+
+					items.add(item);
+
+					i++;
+				}
+
+				Log.d("MOTHERS", items.size() + " school items append!");
+
+				return items;
+			}
+		});
+
+		// A LazyLoadListener is optional!
+		schoolManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
+			// long debug_lazyload_runtime;
+
+			@Override
+			public void onBegin(ManagedOverlay overlay) {
+				// debug_lazyload_runtime = System.currentTimeMillis();
+			}
+
+			@Override
+			public void onSuccess(ManagedOverlay overlay) {
+				// Toast.makeText(
+				// getApplicationContext(),
+				// "school Runtime: "
+				// + (System.currentTimeMillis() - debug_lazyload_runtime)
+				// + " ms", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onError(LazyLoadException exception,
+					ManagedOverlay overlay) {
+
+			}
+		});
+
+		schoolManagedOverlay
+				.setOnOverlayGestureListener(new OnOverlayGestureListener() {
+
+					@Override
+					public boolean onZoom(ZoomEvent arg0, ManagedOverlay arg1) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public boolean onSingleTap(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem item) {
+						if (item != null
+								&& item instanceof PointManagedOverlayItem) {
+
+							PointManagedOverlayItem pItem = (PointManagedOverlayItem) item;
+
+							SchoolVO vo = (SchoolVO) pItem.getVo();
+
+							AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+									MainActivity.this);
+							dialogBuilder.setTitle(vo.getName());
+							dialogBuilder.setMessage("홈페이지: "
+									+ vo.getHomepage() + "\n" + "전화번호: "
+									+ vo.getTelephone() + "\n" + "주소: "
+									+ vo.getAddress() + "\n");
+
+							dialogBuilder.show();
+
+						}
+						return false;
+					}
+
+					@Override
+					public boolean onScrolled(MotionEvent arg0,
+							MotionEvent arg1, float arg2, float arg3,
+							ManagedOverlay arg4) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public void onLongPressFinished(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem arg3) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onLongPress(MotionEvent arg0,
+							ManagedOverlay arg1) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public boolean onDoubleTap(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem arg3) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+				});
+
+	}
+
+	private void createBusStationManagedOverlay() {
+		// TODO Auto-generated method stub
+		ManagedOverlay busStationManagedOverlay = overlayManager.createOverlay(
+				"BusStationOverlay",
+				getResources().getDrawable(R.drawable.map_marker_03));
+
+		// busStationManagedOverlay.enableLazyLoadAnimation(loaderanim);
+
+		busStationManagedOverlay.setLazyLoadCallback(new LazyLoadCallback() {
+
+			@Override
+			public List<? extends ManagedOverlayItem> lazyload(
+					GeoPoint topLeft, GeoPoint bottomRight,
+					ManagedOverlay overlay) throws LazyLoadException {
+				List<PointManagedOverlayItem> items = new LinkedList<PointManagedOverlayItem>();
+
+				List<? extends IPointVO> points = BusHelper.findMarker(topLeft,
+						bottomRight, overlay.getZoomlevel());
+
+				Iterator<? extends IPointVO> iter = points.iterator();
+
+				int i = 0;
+
+				while (iter.hasNext()) {
+					IPointVO vo = iter.next();
+
+					PointManagedOverlayItem item = new PointManagedOverlayItem(
+							new GeoPoint(vo.getLatitude1E6(), vo
+									.getLongitude1E6()), "Item" + i, "", vo);
+
+					items.add(item);
+
+					i++;
+				}
+
+				Log.d("MOTHERS", items.size() + " bus station items append!");
+
+				return items;
+			}
+		});
+
+		// A LazyLoadListener is optional!
+		busStationManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
+			// long debug_lazyload_runtime;
+
+			@Override
+			public void onBegin(ManagedOverlay overlay) {
+				// debug_lazyload_runtime = System.currentTimeMillis();
+			}
+
+			@Override
+			public void onSuccess(ManagedOverlay overlay) {
+				// Toast.makeText(
+				// getApplicationContext(),
+				// "Bus Runtime: "
+				// + (System.currentTimeMillis() - debug_lazyload_runtime)
+				// + " ms", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onError(LazyLoadException exception,
+					ManagedOverlay overlay) {
+
+			}
+		});
+
+		busStationManagedOverlay
+				.setOnOverlayGestureListener(new OnOverlayGestureListener() {
+
+					@Override
+					public boolean onZoom(ZoomEvent arg0, ManagedOverlay arg1) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public boolean onSingleTap(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem item) {
+						if (item != null
+								&& item instanceof PointManagedOverlayItem) {
+
+							PointManagedOverlayItem pItem = (PointManagedOverlayItem) item;
+
+							BusStationVO vo = (BusStationVO) pItem.getVo();
+
+							AlertDialog.Builder idessDialogBuilder = new AlertDialog.Builder(
+									MainActivity.this);
+							idessDialogBuilder.setTitle(vo.getStationNameKor());
+							idessDialogBuilder.setMessage(vo.getStationId());
+
+							idessDialogBuilder.show();
+						}
+						return false;
+					}
+
+					@Override
+					public boolean onScrolled(MotionEvent arg0,
+							MotionEvent arg1, float arg2, float arg3,
+							ManagedOverlay arg4) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public void onLongPressFinished(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem arg3) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onLongPress(MotionEvent arg0,
+							ManagedOverlay arg1) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public boolean onDoubleTap(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem arg3) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+				});
+
+		// overlayManager.populate();
+
+	}
+
+	private void createIdeffAfUserManagedOverlay() {
+		// TODO Auto-generated method stub
+		ManagedOverlay idessAfUserManagedOverlay = overlayManager
+				.createOverlay("IdessAfUserOverlay", getResources()
+						.getDrawable(R.drawable.map_marker_02));
+
+		// idessAfUserManagedOverlay.enableLazyLoadAnimation(loaderanim);
+
+		idessAfUserManagedOverlay.setLazyLoadCallback(new LazyLoadCallback() {
+
+			@Override
+			public List<? extends ManagedOverlayItem> lazyload(
+					GeoPoint topLeft, GeoPoint bottomRight,
+					ManagedOverlay overlay) throws LazyLoadException {
+				List<PointManagedOverlayItem> items = new LinkedList<PointManagedOverlayItem>();
+
+				List<? extends IPointVO> points = IdessAfUserHelper.findMarker(
+						topLeft, bottomRight, overlay.getZoomlevel());
+
+				Iterator<? extends IPointVO> iter = points.iterator();
+
+				int i = 0;
+
+				while (iter.hasNext()) {
+					IPointVO vo = iter.next();
+
+					PointManagedOverlayItem item = new PointManagedOverlayItem(
+							new GeoPoint(vo.getLatitude1E6(), vo
+									.getLongitude1E6()), "Item" + i, "", vo);
+
+					items.add(item);
+
+					i++;
+				}
+
+				Log.d("MOTHERS", items.size() + " idess items append!");
+
+				return items;
+			}
+		});
+
+		// A LazyLoadListener is optional!
+		idessAfUserManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
+			// long debug_lazyload_runtime;
+
+			@Override
+			public void onBegin(ManagedOverlay overlay) {
+				// debug_lazyload_runtime = System.currentTimeMillis();
+			}
+
+			@Override
+			public void onSuccess(ManagedOverlay overlay) {
+				// Toast.makeText(
+				// getApplicationContext(),
+				// "LazyLoadRuntime: "
+				// + (System.currentTimeMillis() - debug_lazyload_runtime)
+				// + " ms", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onError(LazyLoadException exception,
+					ManagedOverlay overlay) {
+
+			}
+		});
+
+		idessAfUserManagedOverlay
+				.setOnOverlayGestureListener(new OnOverlayGestureListener() {
+
+					@Override
+					public boolean onZoom(ZoomEvent arg0, ManagedOverlay arg1) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public boolean onSingleTap(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem item) {
+						if (item != null
+								&& item instanceof PointManagedOverlayItem) {
+
+							PointManagedOverlayItem pItem = (PointManagedOverlayItem) item;
+
+							IdessAfUserVO vo = (IdessAfUserVO) pItem.getVo();
+
+							AlertDialog.Builder idessDialogBuilder = new AlertDialog.Builder(
+									MainActivity.this);
+							idessDialogBuilder.setTitle(vo.getNm());
+							idessDialogBuilder.setMessage(vo.getAd());
+
+							idessDialogBuilder.show();
+						}
+						return false;
+					}
+
+					@Override
+					public boolean onScrolled(MotionEvent arg0,
+							MotionEvent arg1, float arg2, float arg3,
+							ManagedOverlay arg4) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public void onLongPressFinished(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem arg3) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onLongPress(MotionEvent arg0,
+							ManagedOverlay arg1) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public boolean onDoubleTap(MotionEvent arg0,
+							ManagedOverlay arg1, GeoPoint arg2,
+							ManagedOverlayItem arg3) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+				});
+
+		// overlayManager.populate();
+
+	}
+
+	private void createAptsManagedOverlay() {
+		// TODO Auto-generated method stub
 		// animation will be rendered to this ImageView
 		ImageView loaderanim = (ImageView) findViewById(R.id.loader);
 
@@ -235,394 +693,6 @@ public class MainActivity extends MapActivity {
 				});
 
 		// overlayManager.populate();
-
-		ManagedOverlay idessAfUserManagedOverlay = overlayManager
-				.createOverlay("IdessAfUserOverlay", getResources()
-						.getDrawable(R.drawable.map_marker_02));
-
-		idessAfUserManagedOverlay.enableLazyLoadAnimation(loaderanim);
-
-		idessAfUserManagedOverlay.setLazyLoadCallback(new LazyLoadCallback() {
-
-			@Override
-			public List<? extends ManagedOverlayItem> lazyload(
-					GeoPoint topLeft, GeoPoint bottomRight,
-					ManagedOverlay overlay) throws LazyLoadException {
-				List<PointManagedOverlayItem> items = new LinkedList<PointManagedOverlayItem>();
-
-				List<? extends IPointVO> points = IdessAfUserHelper.findMarker(
-						topLeft, bottomRight, overlay.getZoomlevel());
-
-				Iterator<? extends IPointVO> iter = points.iterator();
-
-				int i = 0;
-
-				while (iter.hasNext()) {
-					IPointVO vo = iter.next();
-
-					PointManagedOverlayItem item = new PointManagedOverlayItem(
-							new GeoPoint(vo.getLatitude1E6(), vo
-									.getLongitude1E6()), "Item" + i, "", vo);
-
-					items.add(item);
-
-					i++;
-				}
-
-				Log.d("MOTHERS", items.size() + " idess items append!");
-
-				return items;
-			}
-		});
-
-		// A LazyLoadListener is optional!
-		idessAfUserManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
-			// long debug_lazyload_runtime;
-
-			@Override
-			public void onBegin(ManagedOverlay overlay) {
-				// debug_lazyload_runtime = System.currentTimeMillis();
-			}
-
-			@Override
-			public void onSuccess(ManagedOverlay overlay) {
-				// Toast.makeText(
-				// getApplicationContext(),
-				// "LazyLoadRuntime: "
-				// + (System.currentTimeMillis() - debug_lazyload_runtime)
-				// + " ms", Toast.LENGTH_SHORT).show();
-			}
-
-			@Override
-			public void onError(LazyLoadException exception,
-					ManagedOverlay overlay) {
-
-			}
-		});
-
-		idessAfUserManagedOverlay
-				.setOnOverlayGestureListener(new OnOverlayGestureListener() {
-
-					@Override
-					public boolean onZoom(ZoomEvent arg0, ManagedOverlay arg1) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-					@Override
-					public boolean onSingleTap(MotionEvent arg0,
-							ManagedOverlay arg1, GeoPoint arg2,
-							ManagedOverlayItem item) {
-						if (item != null
-								&& item instanceof PointManagedOverlayItem) {
-
-							PointManagedOverlayItem pItem = (PointManagedOverlayItem) item;
-
-							IdessAfUserVO vo = (IdessAfUserVO) pItem.getVo();
-
-							AlertDialog.Builder idessDialogBuilder = new AlertDialog.Builder(
-									MainActivity.this);
-							idessDialogBuilder.setTitle(vo.getNm());
-							idessDialogBuilder.setMessage(vo.getAd());
-
-							idessDialogBuilder.show();
-						}
-						return false;
-					}
-
-					@Override
-					public boolean onScrolled(MotionEvent arg0,
-							MotionEvent arg1, float arg2, float arg3,
-							ManagedOverlay arg4) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-					@Override
-					public void onLongPressFinished(MotionEvent arg0,
-							ManagedOverlay arg1, GeoPoint arg2,
-							ManagedOverlayItem arg3) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void onLongPress(MotionEvent arg0,
-							ManagedOverlay arg1) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public boolean onDoubleTap(MotionEvent arg0,
-							ManagedOverlay arg1, GeoPoint arg2,
-							ManagedOverlayItem arg3) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-				});
-
-		// overlayManager.populate();
-
-		ManagedOverlay busStationManagedOverlay = overlayManager.createOverlay(
-				"BusStationOverlay",
-				getResources().getDrawable(R.drawable.map_marker_03));
-
-		busStationManagedOverlay.enableLazyLoadAnimation(loaderanim);
-
-		busStationManagedOverlay.setLazyLoadCallback(new LazyLoadCallback() {
-
-			@Override
-			public List<? extends ManagedOverlayItem> lazyload(
-					GeoPoint topLeft, GeoPoint bottomRight,
-					ManagedOverlay overlay) throws LazyLoadException {
-				List<PointManagedOverlayItem> items = new LinkedList<PointManagedOverlayItem>();
-
-				List<? extends IPointVO> points = BusHelper.findMarker(topLeft,
-						bottomRight, overlay.getZoomlevel());
-
-				Iterator<? extends IPointVO> iter = points.iterator();
-
-				int i = 0;
-
-				while (iter.hasNext()) {
-					IPointVO vo = iter.next();
-
-					PointManagedOverlayItem item = new PointManagedOverlayItem(
-							new GeoPoint(vo.getLatitude1E6(), vo
-									.getLongitude1E6()), "Item" + i, "", vo);
-
-					items.add(item);
-
-					i++;
-				}
-
-				Log.d("MOTHERS", items.size() + " bus station items append!");
-
-				return items;
-			}
-		});
-
-		// A LazyLoadListener is optional!
-		busStationManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
-			// long debug_lazyload_runtime;
-
-			@Override
-			public void onBegin(ManagedOverlay overlay) {
-				// debug_lazyload_runtime = System.currentTimeMillis();
-			}
-
-			@Override
-			public void onSuccess(ManagedOverlay overlay) {
-				// Toast.makeText(
-				// getApplicationContext(),
-				// "Bus Runtime: "
-				// + (System.currentTimeMillis() - debug_lazyload_runtime)
-				// + " ms", Toast.LENGTH_SHORT).show();
-			}
-
-			@Override
-			public void onError(LazyLoadException exception,
-					ManagedOverlay overlay) {
-
-			}
-		});
-
-		busStationManagedOverlay
-				.setOnOverlayGestureListener(new OnOverlayGestureListener() {
-
-					@Override
-					public boolean onZoom(ZoomEvent arg0, ManagedOverlay arg1) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-					@Override
-					public boolean onSingleTap(MotionEvent arg0,
-							ManagedOverlay arg1, GeoPoint arg2,
-							ManagedOverlayItem item) {
-						if (item != null
-								&& item instanceof PointManagedOverlayItem) {
-
-							PointManagedOverlayItem pItem = (PointManagedOverlayItem) item;
-
-							BusStationVO vo = (BusStationVO) pItem.getVo();
-
-							AlertDialog.Builder idessDialogBuilder = new AlertDialog.Builder(
-									MainActivity.this);
-							idessDialogBuilder.setTitle(vo.getStationNameKor());
-							idessDialogBuilder.setMessage(vo.getStationId());
-
-							idessDialogBuilder.show();
-						}
-						return false;
-					}
-
-					@Override
-					public boolean onScrolled(MotionEvent arg0,
-							MotionEvent arg1, float arg2, float arg3,
-							ManagedOverlay arg4) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-					@Override
-					public void onLongPressFinished(MotionEvent arg0,
-							ManagedOverlay arg1, GeoPoint arg2,
-							ManagedOverlayItem arg3) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void onLongPress(MotionEvent arg0,
-							ManagedOverlay arg1) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public boolean onDoubleTap(MotionEvent arg0,
-							ManagedOverlay arg1, GeoPoint arg2,
-							ManagedOverlayItem arg3) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-				});
-
-		// overlayManager.populate();
-
-		ManagedOverlay schoolManagedOverlay = overlayManager.createOverlay(
-				"SchoolManagedOverlay",
-				getResources().getDrawable(R.drawable.map_marker_04));
-
-		schoolManagedOverlay.enableLazyLoadAnimation(loaderanim);
-
-		schoolManagedOverlay.setLazyLoadCallback(new LazyLoadCallback() {
-
-			@Override
-			public List<? extends ManagedOverlayItem> lazyload(
-					GeoPoint topLeft, GeoPoint bottomRight,
-					ManagedOverlay overlay) throws LazyLoadException {
-				List<PointManagedOverlayItem> items = new LinkedList<PointManagedOverlayItem>();
-
-				List<? extends IPointVO> points = SchoolHelper.findMarker(
-						topLeft, bottomRight, overlay.getZoomlevel());
-
-				Iterator<? extends IPointVO> iter = points.iterator();
-
-				int i = 0;
-
-				while (iter.hasNext()) {
-					IPointVO vo = iter.next();
-
-					PointManagedOverlayItem item = new PointManagedOverlayItem(
-							new GeoPoint(vo.getLatitude1E6(), vo
-									.getLongitude1E6()), "Item" + i, "", vo);
-
-					items.add(item);
-
-					i++;
-				}
-
-				Log.d("MOTHERS", items.size() + " school items append!");
-
-				return items;
-			}
-		});
-
-		// A LazyLoadListener is optional!
-		schoolManagedOverlay.setLazyLoadListener(new LazyLoadListener() {
-			// long debug_lazyload_runtime;
-
-			@Override
-			public void onBegin(ManagedOverlay overlay) {
-				// debug_lazyload_runtime = System.currentTimeMillis();
-			}
-
-			@Override
-			public void onSuccess(ManagedOverlay overlay) {
-				// Toast.makeText(
-				// getApplicationContext(),
-				// "school Runtime: "
-				// + (System.currentTimeMillis() - debug_lazyload_runtime)
-				// + " ms", Toast.LENGTH_SHORT).show();
-			}
-
-			@Override
-			public void onError(LazyLoadException exception,
-					ManagedOverlay overlay) {
-
-			}
-		});
-
-		schoolManagedOverlay
-				.setOnOverlayGestureListener(new OnOverlayGestureListener() {
-
-					@Override
-					public boolean onZoom(ZoomEvent arg0, ManagedOverlay arg1) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-					@Override
-					public boolean onSingleTap(MotionEvent arg0,
-							ManagedOverlay arg1, GeoPoint arg2,
-							ManagedOverlayItem item) {
-						if (item != null
-								&& item instanceof PointManagedOverlayItem) {
-
-							PointManagedOverlayItem pItem = (PointManagedOverlayItem) item;
-
-							SchoolVO vo = (SchoolVO) pItem.getVo();
-
-							AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
-									MainActivity.this);
-							dialogBuilder.setTitle(vo.getName());
-							dialogBuilder.setMessage("홈페이지: "
-									+ vo.getHomepage() + "\n" + "전화번호: "
-									+ vo.getTelephone() + "\n" + "주소: "
-									+ vo.getAddress() + "\n");
-
-							dialogBuilder.show();
-
-						}
-						return false;
-					}
-
-					@Override
-					public boolean onScrolled(MotionEvent arg0,
-							MotionEvent arg1, float arg2, float arg3,
-							ManagedOverlay arg4) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-					@Override
-					public void onLongPressFinished(MotionEvent arg0,
-							ManagedOverlay arg1, GeoPoint arg2,
-							ManagedOverlayItem arg3) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void onLongPress(MotionEvent arg0,
-							ManagedOverlay arg1) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public boolean onDoubleTap(MotionEvent arg0,
-							ManagedOverlay arg1, GeoPoint arg2,
-							ManagedOverlayItem arg3) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-				});
-
-		overlayManager.populate();
 
 	}
 

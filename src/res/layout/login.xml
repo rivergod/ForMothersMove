@@ -16,7 +16,7 @@
 			<TextView android:text="@string/loginid" android:id="@+id/textView1"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:gravity="center_horizontal"></TextView>
-			<EditText android:id="@+id/editText1" android:layout_width="wrap_content"
+			<EditText android:id="@+id/loginuseridedtxt" android:layout_width="wrap_content"
 				android:layout_weight="1" android:layout_height="wrap_content">
 				<requestFocus></requestFocus>
 			</EditText>
@@ -28,7 +28,7 @@
 				android:gravity="center_horizontal" android:paddingBottom="5dip"
 				android:paddingTop="5dip" android:paddingLeft="10dip"
 				android:paddingRight="10dip"></TextView>
-			<EditText android:id="@+id/editText1" android:layout_width="wrap_content"
+			<EditText android:id="@+id/loginpasswdedtxt" android:layout_width="wrap_content"
 				android:layout_weight="1" android:layout_height="wrap_content">
 			</EditText>
 		</TableRow>
@@ -36,9 +36,9 @@
 	<LinearLayout android:layout_height="wrap_content"
 		android:id="@+id/linearLayout5" android:layout_width="fill_parent"
 		android:gravity="center_horizontal">
-		<Button android:text="@string/loginlogin" android:id="@+id/button1"
+		<Button android:text="@string/loginlogin" android:id="@+id/loginloginbtn"
 			android:layout_height="wrap_content" android:layout_width="100dip"></Button>
-		<Button android:text="@string/logincreateaccount" android:id="@+id/loginbtn"
+		<Button android:text="@string/logincreateaccount" android:id="@+id/logincreateaccountbtn"
 			android:layout_height="wrap_content" android:layout_width="100dip"></Button>
 	</LinearLayout>
 </LinearLayout>

@@ -1,13 +1,34 @@
 package com.krcode.mothers.helpers;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.android.maps.GeoPoint;
 import com.krcode.mothers.IConstant;
+import com.krcode.mothers.vo.AccountVO;
 import com.krcode.mothers.vo.AptsVO;
 import com.krcode.mothers.vo.IPointVO;
 
@@ -28,30 +49,92 @@ public class AptHelper {
 		SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(
 				getDatabaseName(), null);
 
-		Cursor c = db.query(
-				"apts",
-				new String[] { "apt_name", "address", "latitude", "longitude" },
-				"(latitude between ? and ?) and (longitude between ? and ?)",
-				new String[] { String.valueOf(bottomright.getLatitudeE6()),
-						String.valueOf(topleft.getLatitudeE6()),
-						String.valueOf(topleft.getLongitudeE6()),
-						String.valueOf(bottomright.getLongitudeE6()) }, null,
-				null, null);
+		Cursor c = db
+				.query("apts",
+						new String[] { "apt_name", "address", "latitude",
+								"longitude" },
+						"(latitude between ? and ?) and (longitude between ? and ?)",
+						new String[] {
+								String.valueOf(bottomright.getLatitudeE6()),
+								String.valueOf(topleft.getLatitudeE6()),
+								String.valueOf(topleft.getLongitudeE6()),
+								String.valueOf(bottomright.getLongitudeE6()) },
+						null, null, null);
 
 		while (c.moveToNext()) {
 			AptsVO vo = new AptsVO();
-			
+
 			vo.setAptName(c.getString(0));
 			vo.setAddress(c.getString(1));
 			vo.setLat(c.getString(2));
 			vo.setLng(c.getString(3));
-			
+
 			markers.add(vo);
 		}
 
 		c.close();
 
 		db.close();
+
+		return markers;
+	}
+
+	public List<? extends AptsVO> getFavorApts(AccountVO vo) {
+		List<AptsVO> markers = new LinkedList<AptsVO>();
+		
+		HttpClient cli = new DefaultHttpClient();
+
+		HttpPost httpPost = new HttpPost();
+
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+
+		nvps.add(new BasicNameValuePair("userId", vo.getUserId()));
+
+		try {
+			httpPost.setURI(new URI("http://mothers.krcode.com/apis/apts.php"));
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
+
+			HttpResponse httpRes = cli.execute(httpPost);
+
+			HttpEntity entity = httpRes.getEntity();
+			InputStream is = entity.getContent();
+
+			StringBuilder recvContent = new StringBuilder();
+			BufferedReader buffReader = new BufferedReader(
+					new InputStreamReader(is, "UTF-8"));
+
+			String contentString = "";
+
+			while ((contentString = buffReader.readLine()) != null) {
+				recvContent.append(contentString);
+			}
+
+			JSONArray jary = new JSONArray(recvContent.toString());
+
+			for (int i = 0; i < jary.length(); i++) {
+				JSONObject jobj = jary.getJSONObject(i);
+				
+				AptsVO retVo = new AptsVO();
+
+				retVo.setAptName(jobj.getString("name"));
+				retVo.setAddress(jobj.getString("address"));
+
+				markers.add(retVo);
+			}
+
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return markers;
 	}

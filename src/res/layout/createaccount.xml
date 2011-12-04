@@ -16,8 +16,9 @@
 			<TextView android:text="@string/createaccountid" android:id="@+id/textView1"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:gravity="center_horizontal"></TextView>
-			<EditText android:id="@+id/editText1" android:layout_width="wrap_content"
-				android:layout_weight="1" android:layout_height="wrap_content">
+			<EditText android:layout_width="wrap_content"
+				android:layout_weight="1" android:layout_height="wrap_content"
+				android:id="@+id/useridedtxt">
 				<requestFocus></requestFocus>
 			</EditText>
 		</TableRow>
@@ -28,8 +29,9 @@
 				android:layout_height="wrap_content" android:gravity="center_horizontal"
 				android:paddingBottom="5dip" android:paddingTop="5dip"
 				android:paddingLeft="10dip" android:paddingRight="10dip"></TextView>
-			<EditText android:id="@+id/editText1" android:layout_width="wrap_content"
-				android:layout_weight="1" android:layout_height="wrap_content">
+			<EditText android:layout_width="wrap_content"
+				android:inputType="textPassword" android:layout_weight="1"
+				android:layout_height="wrap_content" android:id="@+id/passwdedtxt">
 			</EditText>
 		</TableRow>
 		<TableRow android:id="@+id/tableRow3" android:layout_width="wrap_content"
@@ -37,26 +39,70 @@
 			<TextView android:text="@string/createaccountcheckpassword"
 				android:id="@+id/textView2" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:gravity="center_horizontal"></TextView>
-			<EditText android:id="@+id/editText2" android:layout_width="wrap_content"
+			<EditText android:layout_width="wrap_content"
 				android:layout_weight="1" android:inputType="textPassword"
-				android:layout_height="wrap_content"></EditText>
+				android:layout_height="wrap_content" android:id="@+id/passwd2edtxt"></EditText>
 		</TableRow>
 		<TableRow android:id="@+id/tableRow4" android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
 			<TextView android:text="@string/createaccountemail"
 				android:id="@+id/textView2" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:gravity="center_horizontal"></TextView>
-			<EditText android:id="@+id/editText3" android:inputType="textEmailAddress"
+			<EditText android:inputType="textEmailAddress"
 				android:layout_height="wrap_content" android:layout_weight="1"
-				android:layout_width="wrap_content"></EditText>
+				android:layout_width="wrap_content" android:id="@+id/emailedtxt"></EditText>
+		</TableRow>
+		<TableRow android:id="@+id/tableRow5" android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView android:id="@+id/TextView01" android:layout_width="wrap_content"
+				android:text="@string/createaccountfavor0" android:layout_height="wrap_content"
+				android:minHeight="32dp" android:gravity="center_vertical|center_horizontal"></TextView>
+			<RatingBar android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:numStars="5"
+				android:rating="5" android:stepSize="0.5" android:isIndicator="false"
+				android:id="@+id/ratingFavor0" style="?android:attr/ratingBarStyleSmall"
+				android:layout_gravity="center_vertical|center_horizontal"></RatingBar>
+		</TableRow>
+		<TableRow android:id="@+id/tableRow6" android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView android:id="@+id/TextView01" android:layout_width="wrap_content"
+				android:text="@string/createaccountfavor1" android:layout_height="wrap_content"
+				android:minHeight="32dp" android:gravity="center_vertical|center_horizontal"></TextView>
+			<RatingBar android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:numStars="5"
+				android:rating="5" android:stepSize="0.5" android:isIndicator="false"
+				android:id="@+id/ratingFavor1" style="?android:attr/ratingBarStyleSmall"
+				android:layout_gravity="center_vertical|center_horizontal"></RatingBar>
+		</TableRow>
+		<TableRow android:id="@+id/tableRow7" android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView android:id="@+id/TextView01" android:layout_width="wrap_content"
+				android:text="@string/createaccountfavor2" android:layout_height="wrap_content"
+				android:minHeight="32dp" android:gravity="center_vertical|center_horizontal"></TextView>
+			<RatingBar android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:numStars="5"
+				android:rating="5" android:stepSize="0.5" android:isIndicator="false"
+				android:id="@+id/ratingFavor2" style="?android:attr/ratingBarStyleSmall"
+				android:layout_gravity="center_vertical|center_horizontal"></RatingBar>
+		</TableRow>
+		<TableRow android:id="@+id/tableRow8" android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView android:id="@+id/TextView01" android:layout_width="wrap_content"
+				android:text="@string/createaccountfavor3" android:layout_height="wrap_content"
+				android:minHeight="32dp" android:gravity="center_vertical|center_horizontal"></TextView>
+			<RatingBar android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:numStars="5"
+				android:rating="5" android:stepSize="0.5" android:isIndicator="false"
+				android:id="@+id/ratingFavor3" style="?android:attr/ratingBarStyleSmall"
+				android:layout_gravity="center_vertical|center_horizontal"></RatingBar>
 		</TableRow>
 	</TableLayout>
 	<LinearLayout android:layout_height="wrap_content"
 		android:id="@+id/linearLayout5" android:layout_width="fill_parent"
-		android:gravity="center_horizontal">
-		<Button android:text="@string/createaccountcreate" android:id="@+id/button1"
+		android:gravity="center_horizontal" android:paddingTop="10dip">
+		<Button android:text="@string/createaccountcreate" android:id="@+id/createaccountbtn"
 			android:layout_height="wrap_content" android:layout_width="100dip"></Button>
-		<Button android:text="@string/createaccountcancel" android:id="@+id/button2"
+		<Button android:text="@string/createaccountcancel" android:id="@+id/cancelbtn"
 			android:layout_height="wrap_content" android:layout_width="100dip"></Button>
 	</LinearLayout>
 </LinearLayout>

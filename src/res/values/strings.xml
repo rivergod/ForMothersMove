@@ -33,6 +33,10 @@
 	<string name="createaccountpassword">비밀번호</string>
 	<string name="createaccountcheckpassword">확인</string>
 	<string name="createaccountemail">이메일</string>
+	<string name="createaccountfavor0">가격</string>
+	<string name="createaccountfavor1">교육</string>
+	<string name="createaccountfavor2">교통</string>
+	<string name="createaccountfavor3">쾌적</string>
 	<string name="createaccountcreate">가입</string>
 	<string name="createaccountcancel">취소</string>
 </resources>

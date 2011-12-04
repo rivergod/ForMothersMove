@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="match_parent"
-	android:layout_height="match_parent">
-	<TextView android:text="TextView" android:id="@+id/textView1"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:padding="5dip"></TextView>
-
-</LinearLayout>
+<RelativeLayout android:layout_width="fill_parent"
+	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:paddingLeft="10dp" android:paddingRight="10dp">
+	<TextView android:layout_height="wrap_content" android:text="aptName"
+		android:id="@+id/recommendlistrowname" android:layout_width="wrap_content"
+		android:textStyle="bold" android:paddingTop="5dp" android:paddingLeft="10dp"
+		android:paddingRight="10dp"></TextView>
+	<TextView android:layout_height="wrap_content" android:text="address"
+		android:id="@+id/recommendlistrowaddress" android:layout_width="wrap_content"
+		android:layout_below="@+id/recommendlistrowname" android:paddingLeft="10dp"
+		android:paddingRight="10dp"></TextView>
+</RelativeLayout>

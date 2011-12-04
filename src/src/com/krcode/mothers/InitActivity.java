@@ -32,21 +32,21 @@ public class InitActivity extends Activity implements Runnable {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.init);
+//		setContentView(R.layout.init);
 
 		ctx = this;
 
-		Button goToMainActivityBtn = (Button) findViewById(R.id.goToMainActivityBtn);
-
-		goToMainActivityBtn.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(InitActivity.this,
-						MainActivity.class);
-				startActivity(intent);
-			}
-		});
+//		Button goToMainActivityBtn = (Button) findViewById(R.id.goToMainActivityBtn);
+//
+//		goToMainActivityBtn.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				Intent intent = new Intent(InitActivity.this,
+//						MainActivity.class);
+//				startActivity(intent);
+//			}
+//		});
 
 		preferences = getPreferences(MODE_WORLD_WRITEABLE);
 		strVersion = preferences.getString("VERSION", "");
