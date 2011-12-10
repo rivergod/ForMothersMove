@@ -768,13 +768,17 @@ public class MainActivity extends MapActivity {
 
 							AptsVO vo = (AptsVO) pItem.getVo();
 
-							AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
-									MainActivity.this);
-							dialogBuilder.setTitle(vo.getAptName());
-							dialogBuilder.setMessage("주소: " + vo.getAddress()
-									+ "\n");
-
-							dialogBuilder.show();
+//							AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+//									MainActivity.this);
+//							dialogBuilder.setTitle(vo.getAptName());
+//							dialogBuilder.setMessage("주소: " + vo.getAddress()
+//									+ "\n");
+//
+//							dialogBuilder.show();
+							
+							Intent intent = new Intent(MainActivity.this, AptsActivity.class);
+							intent.putExtra("APTSVO", vo);
+							startActivity(intent);
 						}
 						return false;
 					}

@@ -12,8 +12,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -145,7 +143,7 @@ public class AptHelper {
 		return markers;
 	}
 
-	public AptsTradeVO[] getAptsTraneInfos(AptsVO vo) {
+	public List<AptsTradeVO> getAptsTraneInfos(AptsVO vo) {
 		List<AptsTradeVO> retVal = new ArrayList<AptsTradeVO>();
 
 		HttpClient cli = new DefaultHttpClient();
@@ -158,7 +156,6 @@ public class AptHelper {
 		StringBuffer readStringBuffer = null;
 
 		// 거래정보
-
 		try {
 			// 단자의 거래 정보에 있는 평수 가져오기
 			httpPost = new HttpPost(
@@ -260,7 +257,7 @@ public class AptHelper {
 						AptsTradeVO newVo = new AptsTradeVO();
 
 						newVo.setAptsVo(vo);
-						newVo.setType(0);
+						newVo.setType(0);  //trade
 						newVo.setArea(currArea);
 						newVo.setFloor(tradeDanjiDetailObj.getString("FLOOR"));
 						newVo.setYear(currYear);
@@ -287,7 +284,7 @@ public class AptHelper {
 			e.printStackTrace();
 		}
 
-		return (AptsTradeVO[]) retVal.toArray();
+		return retVal;
 	}
 
 	public static String getDatabaseName() {

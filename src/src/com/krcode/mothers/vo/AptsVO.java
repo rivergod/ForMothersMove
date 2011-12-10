@@ -1,6 +1,13 @@
 package com.krcode.mothers.vo;
 
-public class AptsVO implements IPointVO {
+import java.io.Serializable;
+
+public class AptsVO implements IPointVO, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8077096634423556836L;
+	
 	private String aptName;
 	private String address;
 	private String lat;
