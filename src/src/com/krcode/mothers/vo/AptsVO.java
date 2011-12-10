@@ -5,12 +5,16 @@ public class AptsVO implements IPointVO {
 	private String address;
 	private String lat;
 	private String lng;
+	private String dongCode;
+	private String danjiCode;
 
 	public AptsVO() {
 		this.aptName = "";
 		this.address = "";
 		this.lat = "";
 		this.lng = "";
+		this.dongCode = "";
+		this.danjiCode = "";
 	}
 
 	public String getAptName() {
@@ -43,6 +47,22 @@ public class AptsVO implements IPointVO {
 
 	public void setLng(String lng) {
 		this.lng = lng;
+	}
+
+	public String getDongCode() {
+		return dongCode;
+	}
+
+	public void setDongCode(String dongCode) {
+		this.dongCode = dongCode;
+	}
+
+	public String getDanjiCode() {
+		return danjiCode;
+	}
+
+	public void setDanjiCode(String danjiCode) {
+		this.danjiCode = danjiCode;
 	}
 
 	@Override

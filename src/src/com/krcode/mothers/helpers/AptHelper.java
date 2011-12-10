@@ -52,7 +52,7 @@ public class AptHelper {
 		Cursor c = db
 				.query("apts",
 						new String[] { "apt_name", "address", "latitude",
-								"longitude" },
+								"longitude", "dong_code", "danji_code" },
 						"(latitude between ? and ?) and (longitude between ? and ?)",
 						new String[] {
 								String.valueOf(bottomright.getLatitudeE6()),
@@ -68,6 +68,8 @@ public class AptHelper {
 			vo.setAddress(c.getString(1));
 			vo.setLat(c.getString(2));
 			vo.setLng(c.getString(3));
+			vo.setDongCode(c.getString(4));
+			vo.setDanjiCode(c.getString(5));
 
 			markers.add(vo);
 		}
