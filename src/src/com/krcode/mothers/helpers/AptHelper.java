@@ -143,7 +143,7 @@ public class AptHelper {
 		return markers;
 	}
 
-	public List<AptsTradeVO> getAptsTraneInfos(AptsVO vo) {
+	public List<AptsTradeVO> getAptsTradeInfos(AptsVO vo) {
 		List<AptsTradeVO> retVal = new ArrayList<AptsTradeVO>();
 
 		HttpClient cli = new DefaultHttpClient();
@@ -186,7 +186,7 @@ public class AptHelper {
 			}
 
 			Iterator<String> tradeAreasIter = tradeAreas.iterator();
-			// 현재 저장되어 있는 거래 녀도 가져오기
+			// 현재 저장되어 있는 거래 년도 가져오기
 			while (tradeAreasIter.hasNext()) {
 				String currArea = tradeAreasIter.next();
 				httpPost = new HttpPost(
@@ -265,6 +265,137 @@ public class AptHelper {
 						newVo.setDay(tradeDanjiDetailObj.getString("DAY"));
 						newVo.setPrice(tradeDanjiDetailObj.getString("AMT")
 								.trim());
+
+						retVal.add(newVo);
+					}
+				}
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//전세, 월세 정보
+		// 거래정보
+		try {
+			// 단자의 거래 정보에 있는 평수 가져오기
+			httpPost = new HttpPost(
+					"http://rtmobile.mltm.go.kr/mobile.do?cmd=getRentDanji");
+			nvps = new ArrayList<NameValuePair>();
+			nvps.add(new BasicNameValuePair("danjiCode", vo.getDanjiCode()));
+			nvps.add(new BasicNameValuePair("dongCode", vo.getDongCode()));
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+
+			httpResponse = cli.execute(httpPost);
+
+			httpEntity = httpResponse.getEntity();
+			readStringBuffer = new StringBuffer();
+			buffReader = new BufferedReader(new InputStreamReader(
+					httpEntity.getContent()));
+
+			while ((readLine = buffReader.readLine()) != null) {
+				readStringBuffer.append(readLine);
+			}
+
+			JSONObject rentDanji = new JSONObject(readStringBuffer.toString());
+			JSONArray rentDanjiAreas = rentDanji.getJSONArray("moctJsonArea");
+
+			List<String> rentAreas = new ArrayList<String>();
+			for (int i = 0; i < rentDanjiAreas.length(); i++) {
+				JSONObject rentDanjiAreaObj = rentDanjiAreas.getJSONObject(i);
+				rentAreas.add(rentDanjiAreaObj.getString("DANJI_AREA"));
+			}
+
+			Iterator<String> rentAreasIter = rentAreas.iterator();
+			// 현재 저장되어 있는 거래 년도 가져오기
+			while (rentAreasIter.hasNext()) {
+				String currArea = rentAreasIter.next();
+				httpPost = new HttpPost(
+						"http://rtmobile.mltm.go.kr/mobile.do?cmd=getRentDanjiYear");
+				nvps = new ArrayList<NameValuePair>();
+				nvps.add(new BasicNameValuePair("danjiArea", currArea));
+				nvps.add(new BasicNameValuePair("danjiCode", vo.getDanjiCode()));
+				nvps.add(new BasicNameValuePair("dongCode", vo.getDongCode()));
+				httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+
+				httpResponse = cli.execute(httpPost);
+
+				httpEntity = httpResponse.getEntity();
+				readStringBuffer = new StringBuffer();
+				buffReader = new BufferedReader(new InputStreamReader(
+						httpEntity.getContent()));
+
+				while ((readLine = buffReader.readLine()) != null) {
+					readStringBuffer.append(readLine);
+				}
+
+				JSONObject rentDanjiYear = new JSONObject(
+						readStringBuffer.toString());
+				JSONArray rentDanjiYears = rentDanjiYear
+						.getJSONArray("moctJsonYear");
+
+				List<String> rentYears = new ArrayList<String>();
+				for (int i = 0; i < rentDanjiYears.length(); i++) {
+					JSONObject rentDanjiYearObj = rentDanjiYears
+							.getJSONObject(i);
+					rentYears.add(rentDanjiYearObj.getString("DANJI_YEAR"));
+				}
+
+				Iterator<String> rentYearsIter = rentYears.iterator();
+				while (rentYearsIter.hasNext()) {
+					String currYear = rentYearsIter.next();
+					httpPost = new HttpPost(
+							"http://rtmobile.mltm.go.kr/mobile.do?cmd=getRentDanjiDetail");
+					nvps = new ArrayList<NameValuePair>();
+					nvps.add(new BasicNameValuePair("danjiArea", currArea));
+					nvps.add(new BasicNameValuePair("danjiCode", vo
+							.getDanjiCode()));
+					nvps.add(new BasicNameValuePair("danjiYear", currYear));
+					nvps.add(new BasicNameValuePair("dongCode", vo
+							.getDongCode()));
+					httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+
+					httpResponse = cli.execute(httpPost);
+
+					httpEntity = httpResponse.getEntity();
+					readStringBuffer = new StringBuffer();
+					buffReader = new BufferedReader(new InputStreamReader(
+							httpEntity.getContent()));
+
+					while ((readLine = buffReader.readLine()) != null) {
+						readStringBuffer.append(readLine);
+					}
+
+					JSONObject rentDanjiDetail = new JSONObject(
+							readStringBuffer.toString());
+					JSONArray rentDanjiDetails = rentDanjiDetail
+							.getJSONArray("moctJsonDetail");
+
+					for (int i = 0; i < rentDanjiDetails.length(); i++) {
+						JSONObject tradeDanjiDetailObj = rentDanjiDetails
+								.getJSONObject(i);
+
+						AptsTradeVO newVo = new AptsTradeVO();
+
+						newVo.setAptsVo(vo);
+						newVo.setType(1);  //rentss
+						newVo.setArea(currArea);
+						newVo.setFloor(tradeDanjiDetailObj.getString("FLOOR"));
+						newVo.setYear(currYear);
+						newVo.setMonth(tradeDanjiDetailObj.getString("MONTH"));
+						newVo.setDay(tradeDanjiDetailObj.getString("DAY"));
+						newVo.setDeposit(tradeDanjiDetailObj.getString("DEPOSIT")
+								.trim());
+						newVo.setMonthlyFee(tradeDanjiDetailObj.getString("MONTYLY").trim());
 
 						retVal.add(newVo);
 					}

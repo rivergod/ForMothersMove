@@ -42,7 +42,7 @@ public class AptsActivity extends ListActivity {
 			List<Map<String, String>> al = new ArrayList<Map<String, String>>();
 
 			AptHelper hlp = new AptHelper();
-			List<AptsTradeVO> tradeVos = hlp.getAptsTraneInfos(aptsVo);
+			List<AptsTradeVO> tradeVos = hlp.getAptsTradeInfos(aptsVo);
 
 			Iterator<AptsTradeVO> tradeVosIter = tradeVos.iterator();
 
