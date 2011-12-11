@@ -53,6 +53,27 @@ public class BusHelper {
 		return markers;
 	}
 
+	/*
+	 * getRouteByStationRequest
+	 * 
+	 * 
+	 * http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation?arsId=02212
+	 * 
+	 * 
+	 * http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation?arsId=02212
+	 * 
+	 * 
+	 * <resource path="getRouteByStation/"> <method name="GET"> <request> <param
+	 * name="arsid" style="query" type="xs:string" /> <param
+	 * name="commsgheader.servicekey" style="query" type="xs:string" /> <param
+	 * name="commsgheader.requestmsgid" style="query" type="xs:string" /> <param
+	 * name="commsgheader.requesttime" style="query" type="xs:string" /> <param
+	 * name="commsgheader.callbackuri" style="query" type="xs:string" /> <param
+	 * name="msgheader.headermsg" style="query" type="xs:string" /> </request>
+	 * <response> <representation mediaType="text/xml" /> </response> </method>
+	 * </resource>
+	 */
+
 	public static String getDatabaseName() {
 		return IConstant.SD_PATH + IConstant.DB_PATH + "mothers.db";
 	}

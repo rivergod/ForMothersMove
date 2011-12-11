@@ -268,7 +268,7 @@ public class MainActivity extends MapActivity {
 
 	private void createOverlays() {
 		createAptsManagedOverlay();
-		createIdeffAfUserManagedOverlay();
+		createIdessAfUserManagedOverlay();
 		createBusStationManagedOverlay();
 		createSchoolManagedOverlay();
 
@@ -495,12 +495,12 @@ public class MainActivity extends MapActivity {
 
 							BusStationVO vo = (BusStationVO) pItem.getVo();
 
-							AlertDialog.Builder idessDialogBuilder = new AlertDialog.Builder(
+							AlertDialog.Builder busStationDialogBuilder = new AlertDialog.Builder(
 									MainActivity.this);
-							idessDialogBuilder.setTitle(vo.getStationNameKor());
-							idessDialogBuilder.setMessage(vo.getStationId());
+							busStationDialogBuilder.setTitle(vo.getStationNameKor());
+							busStationDialogBuilder.setMessage("정류장번호: " + vo.getStationId());
 
-							idessDialogBuilder.show();
+							busStationDialogBuilder.show();
 						}
 						return false;
 					}
@@ -541,7 +541,7 @@ public class MainActivity extends MapActivity {
 
 	}
 
-	private void createIdeffAfUserManagedOverlay() {
+	private void createIdessAfUserManagedOverlay() {
 		// TODO Auto-generated method stub
 		ManagedOverlay idessAfUserManagedOverlay = overlayManager
 				.createOverlay("IdessAfUserOverlay", getResources()
@@ -630,7 +630,7 @@ public class MainActivity extends MapActivity {
 							AlertDialog.Builder idessDialogBuilder = new AlertDialog.Builder(
 									MainActivity.this);
 							idessDialogBuilder.setTitle(vo.getNm());
-							idessDialogBuilder.setMessage(vo.getAd());
+							idessDialogBuilder.setMessage("주소: " + vo.getAd() + "\n" + "전화번호: " + vo.getPh());
 
 							idessDialogBuilder.show();
 						}

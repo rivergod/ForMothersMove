@@ -52,6 +52,8 @@ public class IdessAfUserHelper {
 						+ (((float) topleft.getLatitudeE6()) / 1E6)
 						+ "&minLongitude="
 						+ (((float) topleft.getLongitudeE6()) / 1E6));
+		
+		Log.d("MOTHERS", httpGet.getURI().toString());
 
 		HttpResponse res = null;
 
@@ -104,25 +106,26 @@ public class IdessAfUserHelper {
 					else if ("ln".equals(nodeName)) {
 						vo.setLn(nodeValue);
 					}
+					else if ("ad".equals(nodeName)) {
+						vo.setAd(nodeValue);
+					}
+					else if ("ph".equals(nodeName)) {
+						vo.setPh(nodeValue);
+					}
 				}
 				
 				markers.add(vo);
 			}
 
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
 			Log.e("MOTHERS", e.getStackTrace().toString());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			Log.e("MOTHERS", e.getStackTrace().toString());
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			Log.e("MOTHERS", e.getStackTrace().toString());
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			Log.e("MOTHERS", e.getStackTrace().toString());
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
 			Log.e("MOTHERS", e.getStackTrace().toString());
 		}
 
