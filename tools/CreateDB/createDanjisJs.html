@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="js/json2.js"></script>
+<script type="text/javascript" src="js/danjis.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.3&sensor=false"></script>
+<script type="text/javascript">
+	var target = null;
+	
+	var danjis = new Array();
+
+	jQuery('body').ready(function(){
+//		target = jQuery(document.createElement('ul'));
+//		jQuery('#txt').append(target);
+		
+		for (i=0; i < moctDanjiGeo.moctJsonList.length; i++) {
+			var danji = {
+				"address": "",
+				"country": "",
+				"locality": "",
+				"sigungu": "",
+				"eupmyeondong": "",
+				"street_address": "",
+				"latitude": "",
+				"longitude": "",
+				"apt_name": "",
+				"apt_area": new Array()
+			};
+
+			if (moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components.length > 4 ) {
+				danji.country = moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components[4].long_name;
+				danji.locality = moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components[3].long_name;
+				danji.sigungu = moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components[2].long_name;
+				danji.eupmyeondong = moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components[1].long_name;
+				danji.street_address = moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components[0].long_name;
+			}
+			else {
+				danji.country = moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components[3].long_name;
+				danji.locality = moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components[2].long_name;
+				danji.sigungu = moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components[1].long_name;
+				danji.eupmyeondong = moctDanjiGeo.moctJsonList[i].formatted_address2[0].address_components[0].long_name;
+				danji.street_address = "";
+			}
+			
+			danji.address = moctDanjiGeo.moctJsonList[i].formatted_address2[0].formatted_address;
+
+			
+			danji.latitude = moctDanjiGeo.moctJsonList[i].lat;
+			danji.longitude = moctDanjiGeo.moctJsonList[i].lng;
+			
+			danji.apt_name = moctDanjiGeo.moctJsonList[i].moctJsonApt;
+			
+			for (j=0; j < moctDanjiGeo.moctJsonList[i].moctJsonAreas.length - 1; j++ )
+			{
+				danji.apt_area.push(moctDanjiGeo.moctJsonList[i].moctJsonAreas[j]);
+			}
+			
+			
+			
+//			li = jQuery(document.createElement('li'));
+//			li.html(JSON.stringify(danji));
+//			target.append(li);
+			
+			danjis.push(danji);
+		}
+		
+		jQuery('#txt').html(JSON.stringify(danjis));
+	});
+</script>
+</head>
+    <body>
+        <div id="txt">
+        </div>
+    </body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="js/json2.js"></script>
+<script type="text/javascript" src="js/moctDanjiDetail.js"></script>
+<script type="text/javascript"
+	src="http://maps.google.com/maps/api/js?v=3.3&sensor=false"></script>
+<script type="text/javascript">
+
+/*
+select apts.idx, danjis.dongcode, danjis.danjicode, address country, locality, sigungu, eupmyeondong, street_address, latitude, longitude  from apts, apts_code_dong, danjis where apts.eupmyeondong = apts_code_dong.name and apts_code_dong.code = danjis.dongcode and danjis.name = apts.apt_name;
+
+CREATE TABLE "apts_new" (
+    "idx" INTEGER PRIMARY KEY ASC autoincrement,
+	"dong_code" TEXT, 
+	"danji_code" TEXT,
+    "apt_name" TEXT,
+    "address" TEXT,
+    "country" TEXT,
+    "locality" TEXT,
+    "sigungu" TEXT,
+    "eupmyeondong" TEXT,
+    "street_address" TEXT,
+    "latitude" REAL,
+    "longitude" REAL
+);
+
+select apts.idx, danjis.dongcode, danjis.danjicode, apt_name, address, country, locality, sigungu, eupmyeondong, street_address, latitude, longitude  from apts, apts_code_dong, danjis where apts.eupmyeondong = apts_code_dong.name and apts_code_dong.code = danjis.dongcode and danjis.name = apts.apt_name;
+
+insert into apts_new (dong_code, danji_code, apt_name, address, country, locality, sigungu, eupmyeondong, street_address, latitude, longitude) select danjis.dongcode, danjis.danjicode, apt_name, address, country, locality, sigungu, eupmyeondong, street_address, latitude, longitude  from apts, apts_code_dong, danjis where apts.eupmyeondong = apts_code_dong.name and apts_code_dong.code = danjis.dongcode and danjis.name = apts.apt_name;
+*/
+	var target = null;
+	jQuery('body').ready(function() {
+		target = jQuery(document.createElement('ul'));
+		jQuery('#txt').append(target);
+
+		for (i = 0; i < mortDanji.moctJsonList.length; i++) {
+			var danji = mortDanji.moctJsonList[i];
+			
+			var li = jQuery(document.createElement('li'));
+			li.text("INSERT INTO danjis VALUES ('"+danji.DONG_CODE+"', '"+danji.DANJI_CODE+"', '"+danji.DANJI_NAME+"');");
+			target.append(li);
+		}
+
+	});
+</script>
+</head>
+<body>
+	<div id="txt"></div>
+</body>
+</html>

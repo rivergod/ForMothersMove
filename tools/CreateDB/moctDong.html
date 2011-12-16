@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="js/jquery-1.7.1.js">
+        </script>
+        <script type="text/javascript">
+            //cors is equal to true if a browser can create an XMLHttpRequest object
+            //and if that XMLHttpRequest object has a withCredentials property.
+            //To enable cross-domain requests in environments that do not support cors
+            //yet but do allow cross-domain XHR requests (windows gadget, etc),
+            //set $.support.cors = true;. CORS WD
+            jQuery.support.cors = true;
+            
+            jQuery('body').ready(function(){
+            
+                var target = jQuery(document.createElement('ul'));
+                jQuery('#txt').append(target);
+                
+                for (j = 0; j < moctGu.moctJsonList.length; j++) {
+                
+                    jQuery.ajax('http://rtmobile.mltm.go.kr/mobile.do', {
+                        type: 'GET',
+                        crossDomain: true,
+                        data: {
+                            'cmd': 'searchDong',
+                            "sidoCode": "11",
+                            "gugunCode": moctGu.moctJsonList[j].GUGUN_CODE,
+                            "gubunCode": "2"
+                        },
+                        dataType: 'json',
+                        success: function(data){
+                        
+                            for (i = 0; i < data.moctJsonList.length; i++) {
+                                li = jQuery(document.createElement('li'));
+                                li.html("{\"DONG_CODE\": \"" +
+                                data.moctJsonList[i].DONG_CODE +
+                                "\", \"DONG_NAME\": \"" +
+                                data.moctJsonList[i].DONG_NAME +
+                                "\"},");
+                                target.append(li);
+                                
+                            }
+                            
+                        },
+                        error: function(jqXHR, textStatus, errorThrown){
+                            jQuery('#txt').html('<p>textStatus: ' +
+                            textStatus +
+                            '</p>');
+                        }
+                    });
+                    
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <div id="txt">
+        </div>
+    </body>
+</html>

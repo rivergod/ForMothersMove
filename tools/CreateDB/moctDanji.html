@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="js/jquery-1.7.1.js">
+        </script>
+        <script type="text/javascript" src="js/moct.js">
+        </script>
+        <script type="text/javascript">
+            //cors is equal to true if a browser can create an XMLHttpRequest object
+            //and if that XMLHttpRequest object has a withCredentials property.
+            //To enable cross-domain requests in environments that do not support cors
+            //yet but do allow cross-domain XHR requests (windows gadget, etc),
+            //set $.support.cors = true;. CORS WD
+            jQuery.support.cors = true;
+            
+            jQuery('body').ready(function(){
+            
+                var target = jQuery(document.createElement('ul'));
+                jQuery('#txt').append(target);
+                
+                for (j = 0; j < moctDong.moctJsonList.length; j++) {
+                
+                    jQuery.ajax('http://rtmobile.mltm.go.kr/mobile.do', {
+                        type: 'GET',
+                        crossDomain: true,
+                        async: false,
+                        data: {
+                            'cmd': 'searchDanji',
+                            "sidoCode": "11",
+                            "gugunCode": '11680',
+                            "dongCode": moctDong.moctJsonList[j].DONG_CODE,
+                            "page": '1',
+                            "gubunCode": "1"
+                        },
+                        dataType: 'json',
+                        success: function(data){
+                        
+//                            li = jQuery(document.createElement('li'));
+//                            li.html("{\"totalCnt\": \"" +
+//                            data.totalCnt +
+//                            "\"},");
+//                            target.append(li);
+                            
+                            for (k = 1; k <= parseInt(data.totalCnt / 20) + 1; k++) {
+							
+								jQuery.ajax('http://rtmobile.mltm.go.kr/mobile.do', {
+									type: 'GET',
+									crossDomain: true,
+									async: false,
+									data: {
+										'cmd': 'searchDanji',
+										"sidoCode": "11",
+										"gugunCode": '11680',
+										"dongCode": moctDong.moctJsonList[j].DONG_CODE,
+										"page": k,
+										"gubunCode": "1"
+									},
+									dataType: 'json',
+									success: function(data2){
+									
+										for (i = 0; i < data2.moctJsonList.length; i++) {
+											li = jQuery(document.createElement('li'));
+											li.html("{DONG_CODE: \"" + moctDong.moctJsonList[j].DONG_CODE + "\", DANJI_CODE\": \"" +
+											data2.moctJsonList[i].DANJI_CODE +
+											"\", \"DANJI_NAME\": \"" +
+											data2.moctJsonList[i].DANJI_NAME +
+											"\"},");
+											target.append(li);
+											
+										}
+										
+									},
+									error: function(jqXHR, textStatus, errorThrown){
+										jQuery('#txt').html('<p>textStatus: ' +
+										textStatus +
+										'</p>');
+									}
+								});
+							}
+                        },
+                        error: function(jqXHR, textStatus, errorThrown){
+                            jQuery('#txt').html('<p>textStatus: ' +
+                            textStatus +
+                            '</p>');
+                        }
+                    });
+                }
+                
+            });
+        </script>
+    </head>
+    <body>
+        <div id="txt">
+        </div>
+    </body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="js/jquery-1.7.1.js">
+        </script>
+        <script type="text/javascript" src="js/moct.js">
+        </script>
+        <script type="text/javascript">
+            //cors is equal to true if a browser can create an XMLHttpRequest object
+            //and if that XMLHttpRequest object has a withCredentials property.
+            //To enable cross-domain requests in environments that do not support cors
+            //yet but do allow cross-domain XHR requests (windows gadget, etc),
+            //set $.support.cors = true;. CORS WD
+            jQuery.support.cors = true;
+            
+            jQuery('body').ready(function(){
+            
+                var target = jQuery(document.createElement('ul'));
+                jQuery('#txt').append(target);
+                
+                for (j = 0; j < mortDanji.moctJsonList.length; j++) {
+                
+                    jQuery.ajax('http://rtmobile.mltm.go.kr/mobile.do', {
+                        type: 'GET',
+                        crossDomain: true,
+                        async: false,
+                        data: {
+                            'cmd': 'getTradeDanji',
+                            'danjiCode': mortDanji.moctJsonList[j].DANJI_CODE,
+                            'dongCode': mortDanji.moctJsonList[j].DONG_CODE
+                        },
+                        dataType: 'json',
+                        success: function(data){
+                        
+                            //{"moctJsonAddrBunji":"0450",
+                            //"moctJsonApt":"한신1차",
+                            //"moctJsonAddrHo":"0000","moctJsonAddr":"서울특별시 중랑구 중화동",
+                            //"moctJsonArea":[{"DANJI_AREA":"51"},{"DANJI_AREA":"60"},{"DANJI_AREA":"85"}]}
+                            
+                            li = jQuery(document.createElement('li'));
+                            lihtml = "{\"moctJsonAddrBunji\": \"" + data.moctJsonAddrBunji + "\", \"moctJsonApt\": \"" +
+                                data.moctJsonApt +
+                                "\", \"moctJsonAddrHo\": \"" +
+                                data.moctJsonAddrHo +
+                                "\", \"moctJsonAddr\": \"" +
+                                data.moctJsonAddr +
+                                "\", \"moctJsonAreaLength\": \"" +
+                                data.moctJsonArea.length +
+                                "\", \"moctJsonAreas\": [";
+                            
+							for (i=0; i < data.moctJsonArea.length; i++) {
+                            	lihtml += "" +  data.moctJsonArea[i].DANJI_AREA + ", ";
+							}
+							
+							lihtml += "0";
+                            
+                            lihtml += "]},";
+                            
+                            li.html(lihtml);
+                            target.append(li);
+                            
+                        },
+                        error: function(jqXHR, textStatus, errorThrown){
+                            jQuery('#txt').html('<p>textStatus: ' +
+                            textStatus +
+                            '</p>');
+                        }
+                    });
+                }
+                
+            });
+        </script>
+    </head>
+    <body>
+        <div id="txt">
+        </div>
+    </body>
+</html>

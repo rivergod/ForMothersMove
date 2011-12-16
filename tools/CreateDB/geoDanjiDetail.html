@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="js/jquery-1.7.1.js">
+        </script>
+        <script type="text/javascript" src="js/json2.js">
+        </script>
+        <script type="text/javascript" src="js/moct.js">
+        </script>
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.3&sensor=false">
+        </script>
+        <script type="text/javascript">
+            //cors is equal to true if a browser can create an XMLHttpRequest object
+            //and if that XMLHttpRequest object has a withCredentials property.
+            //To enable cross-domain requests in environments that do not support cors
+            //yet but do allow cross-domain XHR requests (windows gadget, etc),
+            //set $.support.cors = true;. CORS WD
+            jQuery.support.cors = true;
+            var target = null;
+            var i = -1;
+            var intValId = 0;
+            
+            
+            jQuery('body').ready(function(){
+            
+                target = jQuery(document.createElement('ul'));
+                jQuery('#txt').append(target);
+                
+                intValId = setInterval("doInterval()", 200);
+                
+                jQuery('#stop').click(function(){
+                    clearInterval(intValId);
+                });
+            });
+            
+            function doInterval(){
+                i++;
+				
+				var head = "{ \"moctJsonAddrBunji\": " + "\"" + moctDanjiDetail.moctJsonList[i].moctJsonAddrBunji + "\", ";
+				head += " \"moctJsonApt\": " + "\"" + moctDanjiDetail.moctJsonList[i].moctJsonApt + "\", ";
+				head += " \"moctJsonAddrHo\": " + "\"" + moctDanjiDetail.moctJsonList[i].moctJsonAddrHo + "\", ";
+				head += " \"moctJsonAddr\": " + "\"" + moctDanjiDetail.moctJsonList[i].moctJsonAddr + "\", ";
+				head += " \"moctJsonAreaLength\": " + "\"" + moctDanjiDetail.moctJsonList[i].moctJsonAreaLength + "\", ";
+				head += " \"moctJsonAreas\": " + "[";
+
+				for (j=0; j < moctDanjiDetail.moctJsonList[i].moctJsonAreas.length; j++) {
+                	head += "" +  moctDanjiDetail.moctJsonList[i].moctJsonAreas[j] + ", ";
+				}
+				
+				head += "], ";
+				
+//				"moctJsonAddrBunji" : "0796",
+//				"moctJsonApt" : "경남아너스빌",
+//				"moctJsonAddrHo" : "0000",
+//				"moctJsonAddr" : "서울특별시 강북구 미아동",
+//				"moctJsonAreaLength" : "3",
+//				"moctJsonAreas" : [ 63, 82, 85, 0 ]				
+				
+                var address = moctDanjiDetail.moctJsonList[i].moctJsonAddr + " " + parseInt(moctDanjiDetail.moctJsonList[i].moctJsonAddrBunji, 10);
+                
+                if (moctDanjiDetail.moctJsonList[i].moctJsonAddrHo != "0000" && moctDanjiDetail.moctJsonList[i].moctJsonAddrHo != "0 ") {
+                    address += "-" + parseInt(moctDanjiDetail.moctJsonList[i].moctJsonAddrHo, 10);
+                }
+				
+				var tail = "}, "
+                
+                var geocoder = new google.maps.Geocoder();
+                
+                if (geocoder) {
+                    geocoder.geocode({
+                        'address': address,
+                    }, function(results, status){
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            li = jQuery(document.createElement('li'));
+							instr = "\"formatted_address\": \"" + results[0].formatted_address + "\", \"lat\": \"" + results[0].geometry.location.lat() + "\", \"lng\": \"" + results[0].geometry.location.lng() + "\", ";
+							
+							//
+							instr += "\"formatted_address\": " + JSON.stringify(results) + " ";
+							
+                            li.html(head + instr + tail);
+                            target.append(li);
+                        }
+                    });
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div>
+            <input type="button" id="stop" value="stop"/>
+        </div>
+        <div id="txt">
+        </div>
+    </body>
+</html>

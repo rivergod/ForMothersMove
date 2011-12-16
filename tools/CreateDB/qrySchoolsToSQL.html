@@ -1,0 +1,40 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.3&sensor=false"></script>
+<script type="text/javascript" src="js/json2.js"></script>
+<script type="text/javascript" src="js/geoschools.js"></script>
+<script type="text/javascript">
+
+jQuery.support.cors = true;
+var target = null;
+var i = -1;
+
+jQuery(document).ready(function(){
+
+	target = jQuery(document.createElement('ul'));
+	jQuery('#txt').append(target);
+	
+	for ( i = 0 ; i < geoschools.length ; i++ ) {
+		li = jQuery(document.createElement('li'));
+		li.html("INSERT INTO schools ('idx', 'name', 'homepage', 'address', 'telephone') values ('" + geoschools[i].idx + "', '" + geoschools[i].name + "', '" + geoschools[i].homepage + "', '" + geoschools[i].address + "', '" + geoschools[i].telephone+ "');");
+		target.append(li);
+		
+		if ( geoschools[i].lat != null ) {
+			li = jQuery(document.createElement('li'));
+			li.html("UPDATE schools set lat = '" + geoschools[i].lat + "', lng = '" + geoschools[i].lng + "', complete = '1' WHERE idx = '" + geoschools[i].idx + "';");
+			target.append(li);
+		}
+	}
+});
+
+</script>
+</head>
+<body>
+<div>
+	<input type="button" id="stop" value="stop"/>
+</div>
+<div id="txt"></div>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<application xmlns="http://research.sun.com/wadl/2006/10"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<grammars>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			attributeFormDefault="unqualified" elementFormDefault="unqualified">
+			<xs:element name="ServiceResult" nillable="true" type="xs:anyType" />
+			<xs:complexType name="outStationByUid">
+				<xs:complexContent>
+					<xs:extension base="resultBean">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="msgBody"
+								type="resultListStationByUid" />
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="resultBean">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="comMsgHeader" type="comMsgHeader" />
+					<xs:element minOccurs="0" name="msgHeader" type="msgHeader" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="resultListStationByUid">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="itemList"
+						nillable="true" type="stationByUid" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="stationByUid">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="arsId" type="xs:string" />
+					<xs:element minOccurs="0" name="busRouteId" type="xs:string" />
+					<xs:element minOccurs="0" name="busType1" type="xs:string" />
+					<xs:element minOccurs="0" name="busType2" type="xs:string" />
+					<xs:element minOccurs="0" name="firstTm" type="xs:string" />
+					<xs:element minOccurs="0" name="gpsX" type="xs:string" />
+					<xs:element minOccurs="0" name="gpsY" type="xs:string" />
+					<xs:element minOccurs="0" name="isArrive1" type="xs:string" />
+					<xs:element minOccurs="0" name="isArrive2" type="xs:string" />
+					<xs:element minOccurs="0" name="isLast1" type="xs:string" />
+					<xs:element minOccurs="0" name="isLast2" type="xs:string" />
+					<xs:element minOccurs="0" name="lastTm" type="xs:string" />
+					<xs:element minOccurs="0" name="nextBus" type="xs:string" />
+					<xs:element minOccurs="0" name="plainNo1" type="xs:string" />
+					<xs:element minOccurs="0" name="plainNo2" type="xs:string" />
+					<xs:element minOccurs="0" name="repTm1" type="xs:string" />
+					<xs:element minOccurs="0" name="repTm2" type="xs:string" />
+					<xs:element minOccurs="0" name="routeType" type="xs:string" />
+					<xs:element minOccurs="0" name="rtNm" type="xs:string" />
+					<xs:element minOccurs="0" name="sectOrd1" type="xs:string" />
+					<xs:element minOccurs="0" name="sectOrd2" type="xs:string" />
+					<xs:element minOccurs="0" name="stId" type="xs:string" />
+					<xs:element minOccurs="0" name="stNm" type="xs:string" />
+					<xs:element minOccurs="0" name="staOrd" type="xs:string" />
+					<xs:element minOccurs="0" name="stationNm1" type="xs:string" />
+					<xs:element minOccurs="0" name="stationNm2" type="xs:string" />
+					<xs:element minOccurs="0" name="stationTp" type="xs:string" />
+					<xs:element minOccurs="0" name="term" type="xs:string" />
+					<xs:element minOccurs="0" name="traSpd1" type="xs:string" />
+					<xs:element minOccurs="0" name="traSpd2" type="xs:string" />
+					<xs:element minOccurs="0" name="traTime1" type="xs:string" />
+					<xs:element minOccurs="0" name="traTime2" type="xs:string" />
+					<xs:element minOccurs="0" name="vehId1" type="xs:string" />
+					<xs:element minOccurs="0" name="vehId2" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="comMsgHeader">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="errMsg" type="xs:string" />
+					<xs:element minOccurs="0" name="requestMsgID" type="xs:string" />
+					<xs:element minOccurs="0" name="responseMsgID" type="xs:string" />
+					<xs:element minOccurs="0" name="responseTime" type="xs:string" />
+					<xs:element minOccurs="0" name="returnCode" type="xs:string" />
+					<xs:element minOccurs="0" name="successYN" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="msgHeader">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="headerCd" type="xs:string" />
+					<xs:element minOccurs="0" name="headerMsg" type="xs:string" />
+					<xs:element name="itemCount" type="xs:int" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="outBustimeByStation">
+				<xs:complexContent>
+					<xs:extension base="resultBean">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="msgBody"
+								type="resultListBustimeByStation" />
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="resultListBustimeByStation">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="itemList"
+						nillable="true" type="bustimeByStation" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="bustimeByStation">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="arsId" type="xs:string" />
+					<xs:element minOccurs="0" name="busRouteId" type="xs:string" />
+					<xs:element minOccurs="0" name="busRouteNm" type="xs:string" />
+					<xs:element minOccurs="0" name="firstBusTm" type="xs:string" />
+					<xs:element minOccurs="0" name="lastBusTm" type="xs:string" />
+					<xs:element minOccurs="0" name="stationNm" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="outLowStationByName">
+				<xs:complexContent>
+					<xs:extension base="resultBean">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="msgBody"
+								type="resultListLowStationByName" />
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="resultListLowStationByName">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="itemList"
+						nillable="true" type="lowStationByName" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="lowStationByName">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="arsId" type="xs:string" />
+					<xs:element minOccurs="0" name="stId" type="xs:string" />
+					<xs:element minOccurs="0" name="stNm" type="xs:string" />
+					<xs:element minOccurs="0" name="tmX" type="xs:string" />
+					<xs:element minOccurs="0" name="tmY" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="outStationByName">
+				<xs:complexContent>
+					<xs:extension base="resultBean">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="msgBody"
+								type="resultListStationByName" />
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="resultListStationByName">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="itemList"
+						nillable="true" type="stationByName" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="stationByName">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="arsId" type="xs:string" />
+					<xs:element minOccurs="0" name="stId" type="xs:string" />
+					<xs:element minOccurs="0" name="stNm" type="xs:string" />
+					<xs:element minOccurs="0" name="tmX" type="xs:string" />
+					<xs:element minOccurs="0" name="tmY" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="outRouteByStation">
+				<xs:complexContent>
+					<xs:extension base="resultBean">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="msgBody"
+								type="resultListRouteByStation" />
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="resultListRouteByStation">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="itemList"
+						nillable="true" type="routeByStation" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="routeByStation">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="busRouteId" type="xs:string" />
+					<xs:element minOccurs="0" name="busRouteNm" type="xs:string" />
+					<xs:element minOccurs="0" name="busRouteType" type="xs:string" />
+					<xs:element minOccurs="0" name="firstBusTm" type="xs:string" />
+					<xs:element minOccurs="0" name="firstBusTmLow" type="xs:string" />
+					<xs:element minOccurs="0" name="lastBusTm" type="xs:string" />
+					<xs:element minOccurs="0" name="lastBusTmLow" type="xs:string" />
+					<xs:element minOccurs="0" name="length" type="xs:string" />
+					<xs:element minOccurs="0" name="nextBus" type="xs:string" />
+					<xs:element minOccurs="0" name="stBegin" type="xs:string" />
+					<xs:element minOccurs="0" name="stEnd" type="xs:string" />
+					<xs:element minOccurs="0" name="term" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="outStationByPos">
+				<xs:complexContent>
+					<xs:extension base="resultBean">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="msgBody"
+								type="resultListStationByPos" />
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="resultListStationByPos">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="itemList"
+						nillable="true" type="stationByPos" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="stationByPos">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="arsId" type="xs:string" />
+					<xs:element minOccurs="0" name="gpsX" type="xs:string" />
+					<xs:element minOccurs="0" name="gpsY" type="xs:string" />
+					<xs:element minOccurs="0" name="stationId" type="xs:string" />
+					<xs:element minOccurs="0" name="stationNm" type="xs:string" />
+					<xs:element minOccurs="0" name="stationTp" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="outLowStationByUid">
+				<xs:complexContent>
+					<xs:extension base="resultBean">
+						<xs:sequence>
+							<xs:element minOccurs="0" name="msgBody"
+								type="resultListLowStationByUid" />
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="resultListLowStationByUid">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="itemList"
+						nillable="true" type="lowStationByUid" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="lowStationByUid">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="busDist1" type="xs:string" />
+					<xs:element minOccurs="0" name="busDist2" type="xs:string" />
+					<xs:element minOccurs="0" name="busRouteId" type="xs:string" />
+					<xs:element minOccurs="0" name="busType1" type="xs:string" />
+					<xs:element minOccurs="0" name="busType2" type="xs:string" />
+					<xs:element minOccurs="0" name="firstTm" type="xs:string" />
+					<xs:element minOccurs="0" name="isArrive1" type="xs:string" />
+					<xs:element minOccurs="0" name="isArrive2" type="xs:string" />
+					<xs:element minOccurs="0" name="isLast1" type="xs:string" />
+					<xs:element minOccurs="0" name="isLast2" type="xs:string" />
+					<xs:element minOccurs="0" name="lastTm" type="xs:string" />
+					<xs:element minOccurs="0" name="nextBus" type="xs:string" />
+					<xs:element minOccurs="0" name="plainNo1" type="xs:string" />
+					<xs:element minOccurs="0" name="plainNo2" type="xs:string" />
+					<xs:element minOccurs="0" name="repTm1" type="xs:string" />
+					<xs:element minOccurs="0" name="repTm2" type="xs:string" />
+					<xs:element minOccurs="0" name="routeType" type="xs:string" />
+					<xs:element minOccurs="0" name="rtNm" type="xs:string" />
+					<xs:element minOccurs="0" name="sectOrd1" type="xs:string" />
+					<xs:element minOccurs="0" name="sectOrd2" type="xs:string" />
+					<xs:element minOccurs="0" name="staOrd" type="xs:string" />
+					<xs:element minOccurs="0" name="stationNm1" type="xs:string" />
+					<xs:element minOccurs="0" name="stationNm2" type="xs:string" />
+					<xs:element minOccurs="0" name="term" type="xs:string" />
+					<xs:element minOccurs="0" name="traSpd1" type="xs:string" />
+					<xs:element minOccurs="0" name="traSpd2" type="xs:string" />
+					<xs:element minOccurs="0" name="traTime1" type="xs:string" />
+					<xs:element minOccurs="0" name="traTime2" type="xs:string" />
+					<xs:element minOccurs="0" name="vehId1" type="xs:string" />
+					<xs:element minOccurs="0" name="vehId2" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</grammars>
+	<resources base="http://ws.bus.go.kr:80/api/rest/stationinfo">
+		<resource path="/">
+			<resource path="getBustimeByStation/">
+				<method name="GET">
+					<request>
+						<param name="busrouteid" style="query" type="xs:string" />
+						<param name="arsid" style="query" type="xs:string" />
+						<param name="commsgheader.servicekey" style="query" type="xs:string" />
+						<param name="commsgheader.requestmsgid" style="query" type="xs:string" />
+						<param name="commsgheader.requesttime" style="query" type="xs:string" />
+						<param name="commsgheader.callbackuri" style="query" type="xs:string" />
+						<param name="msgheader.headermsg" style="query" type="xs:string" />
+					</request>
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+			<resource path="getLowStationByName/">
+				<method name="GET">
+					<request>
+						<param name="stsrch" style="query" type="xs:string" />
+						<param name="commsgheader.servicekey" style="query" type="xs:string" />
+						<param name="commsgheader.requestmsgid" style="query" type="xs:string" />
+						<param name="commsgheader.requesttime" style="query" type="xs:string" />
+						<param name="commsgheader.callbackuri" style="query" type="xs:string" />
+						<param name="msgheader.headermsg" style="query" type="xs:string" />
+					</request>
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+			<resource path="getLowStationByUid/">
+				<method name="GET">
+					<request>
+						<param name="arsid" style="query" type="xs:string" />
+						<param name="commsgheader.servicekey" style="query" type="xs:string" />
+						<param name="commsgheader.requestmsgid" style="query" type="xs:string" />
+						<param name="commsgheader.requesttime" style="query" type="xs:string" />
+						<param name="commsgheader.callbackuri" style="query" type="xs:string" />
+						<param name="msgheader.headermsg" style="query" type="xs:string" />
+					</request>
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+			<resource path="getRouteByStation/">
+				<method name="GET">
+					<request>
+						<param name="arsid" style="query" type="xs:string" />
+						<param name="commsgheader.servicekey" style="query" type="xs:string" />
+						<param name="commsgheader.requestmsgid" style="query" type="xs:string" />
+						<param name="commsgheader.requesttime" style="query" type="xs:string" />
+						<param name="commsgheader.callbackuri" style="query" type="xs:string" />
+						<param name="msgheader.headermsg" style="query" type="xs:string" />
+					</request>
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+			<resource path="getStationByName/">
+				<method name="GET">
+					<request>
+						<param name="stsrch" style="query" type="xs:string" />
+						<param name="commsgheader.servicekey" style="query" type="xs:string" />
+						<param name="commsgheader.requestmsgid" style="query" type="xs:string" />
+						<param name="commsgheader.requesttime" style="query" type="xs:string" />
+						<param name="commsgheader.callbackuri" style="query" type="xs:string" />
+						<param name="msgheader.headermsg" style="query" type="xs:string" />
+					</request>
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+			<resource path="getStationByPos/">
+				<method name="GET">
+					<request>
+						<param name="tmx" style="query" type="xs:string" />
+						<param name="tmy" style="query" type="xs:string" />
+						<param name="radius" style="query" type="xs:string" />
+						<param name="xa" style="query" type="xs:int" />
+						<param name="xb" style="query" type="xs:int" />
+						<param name="ya" style="query" type="xs:int" />
+						<param name="yb" style="query" type="xs:int" />
+						<param name="commsgheader.servicekey" style="query" type="xs:string" />
+						<param name="commsgheader.requestmsgid" style="query" type="xs:string" />
+						<param name="commsgheader.requesttime" style="query" type="xs:string" />
+						<param name="commsgheader.callbackuri" style="query" type="xs:string" />
+						<param name="msgheader.headermsg" style="query" type="xs:string" />
+					</request>
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+			<resource path="getStationByUid/">
+				<method name="GET">
+					<request>
+						<param name="arsid" style="query" type="xs:string" />
+						<param name="commsgheader.servicekey" style="query" type="xs:string" />
+						<param name="commsgheader.requestmsgid" style="query" type="xs:string" />
+						<param name="commsgheader.requesttime" style="query" type="xs:string" />
+						<param name="commsgheader.callbackuri" style="query" type="xs:string" />
+						<param name="msgheader.headermsg" style="query" type="xs:string" />
+					</request>
+					<response>
+						<representation mediaType="text/xml" />
+					</response>
+				</method>
+			</resource>
+		</resource>
+	</resources>
+</application>
